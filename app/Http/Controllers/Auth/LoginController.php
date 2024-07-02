@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -28,15 +29,15 @@ class LoginController extends Controller
      */
     //protected $redirectTo = '/home';
 
-    protected function authenticated()
-    {
-            if(Auth::user()->role_as == '1'){
-                return redirect('admin/dashboard')->with('message','Welcome to Dashboard');
-            }
-            else{
-                return redirect('/home')->with('status','Logged In Succesfully');
-            }
-        }
+    // protected function authenticated()
+    // {
+    //         if(Auth::user()->role_as == '1'){
+    //             return redirect('admin/dashboard')->with('message','Welcome to Dashboard');
+    //         }
+    //         else{
+    //             return redirect('/home')->with('status','Logged In Succesfully');
+    //         }
+    // }
     /**
      * Create a new controller instance.
      *
@@ -45,5 +46,18 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $user = Auth::user();
+            $redirectUrl = $user->role_as == '1' ? route('admin.dashboard') : route('home');
+
+            return response()->json(['message' => 'Logged in successfully', 'redirect_url' => $redirectUrl], 200);
+        }
+        return response()->json(['error' => 'Invalid credentials'], 401);
     }
 }

@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -8,7 +7,7 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form id="registerForm" method="#" action="#">
                         @csrf
 
                         <div class="row mb-3">
@@ -63,7 +62,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button id="registerSubmit" type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
                             </div>

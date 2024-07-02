@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use Log;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-
-use App\Notifications\NewUserRegistered;
 use App\Models\Customer;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use Illuminate\Support\Facades\Hash;
+use App\Notifications\NewUserRegistered;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
 class RegisterController extends Controller
 {
     /*
@@ -64,27 +67,42 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
- protected function create(array $data)
-{
-    $user = User::create([
-        'name' => $data['name'],
-        'email' => $data['email'],
-        'password' => Hash::make($data['password']),
-    ]);
-//    // $user->sendEmailVerificationNotification();
-//     // Notify the admins. Use 'role_as' instead of 'is_admin' to check for admin users.
-//     $admins = User::where('role_as', '1')->get(); // 1 being the value indicating admin users
-//     foreach ($admins as $admin) {
-//         $admin->notify(new NewUserRegistered($user));
-//     }
-
-    // Create a customer profile for the user
-    $customer = new \App\Models\Customer();
-    $customer->user_id = $user->id;
-    $customer->customer_name = $data['name'];
-    $customer->save();
-
-
-    return $user;
-}
+    protected function store(Request $request)
+    {
+        // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    
+        try {
+            // Create a new user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+    
+            // Create a customer profile for the new user
+            $customer = new \App\Models\Customer();
+            $customer->user_id = $user->id;
+            $customer->customer_name = $request->name;
+            $customer->save();
+    
+            // Return a success response
+            return response()->json(['message' => 'User registered successfully', 'redirect_url' => route('login')], 201);
+    
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error creating user: ' . $e->getMessage());
+    
+            // Return an error response
+            return response()->json(['error' => 'An error occurred during registration. Please try again later.'], 500);
+        }
+    }
 }

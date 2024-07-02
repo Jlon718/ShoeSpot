@@ -37,7 +37,7 @@ Route::get('/', function () {
 //==========================================================================================
 //after ma very mapupunta sa home
 Auth::routes(['verify' => true]);
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/home/search', [SearchController::class, 'index'])->name('search');
 //==========================================================================================
 
@@ -45,7 +45,7 @@ Route::get('/home/search', [SearchController::class, 'index'])->name('search');
 //==========================================================================================
 //admin dashboard (Admin side)
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'dashboard']);
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/mark-notification-read/{id}', [NotificationController::class, 'markNotificationAsRead'])
     ->name('markNotificationRead');
     Route::get('product', [ProductController::class, 'product']);

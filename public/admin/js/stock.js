@@ -37,6 +37,7 @@ $(document).ready(function () {
     }); // end datatable
 
     $('#stockAdd').on('click', function(e) {
+        
             $.ajax({
                 url: "/api/availableProduct", // Endpoint to fetch products
                 method: "GET",
