@@ -37,7 +37,7 @@ Route::get('/', function () {
 //==========================================================================================
 //after ma very mapupunta sa home
 Auth::routes(['verify' => true]);
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::view('/home','home')->name('home');
 Route::get('/home/search', [SearchController::class, 'index'])->name('search');
 //==========================================================================================
 
@@ -83,6 +83,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
     return redirect('/home'); // Redirect the user after verification
 })->middleware(['auth', 'signed'])->name('verification.verify');
+
 
 //==========================================================================================
 

@@ -53,62 +53,10 @@
 
 @section('scripts')
     <script type="text/javascript">
-        $(".cart_update").click(function(e) {
-            e.preventDefault();
-            var ele = $(this);
-
-                $.ajax({
-                    url:'{{route('update_cart')}}',
-                    method: "patch",
-                    data: {
-                        _token: '{{csrf_token()}}',
-                        id: ele.parents("tr").attr("data-id"),
-                        quantity: ele.parents("tr").find(".quantity").val()
-                    },
-                    success: function (response) {
-                        window.location.reload();
-                    }
-                });
-             });
-
-        $(".cart_remove").click(function(e) {
-            e.preventDefault();
-            var ele = $(this);
-
-            if(confirm("Do you really want to remove?")) {
-                $.ajax({
-                    url:'{{route('remove_from_cart')}}',
-                    method: "DELETE",
-                    data: {
-                        _token: '{{csrf_token()}}',
-                        id: ele.parents("tr").attr("data-id")
-                    },
-                    success: function (response) {
-                        window.location.reload();
-                    }
-                });
-            }
-        });
-
-        $(".cart_checkout").click(function(e) {
-            e.preventDefault();
-            if(confirm("Do you want to proceed with the checkout?")) {
-                $.ajax({
-                    url: '{{ route('checkout') }}',
-                    method: "POST",
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (response) {
-                        // Assuming you have a success page to redirect after checkout
-                        window.location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        alert('An error occurred during checkout: ' + xhr.responseText);
-                    }
-                });
-            }
-        });
+        var update_cart_url = '{{ route('update_cart') }}';
+        var remove_from_cart_url = '{{ route('remove_from_cart') }}';
+        var checkout_url = '{{ route('checkout') }}';
+        var csrf_token = '{{ csrf_token() }}';
     </script>
+    <script src="{{ asset('customer/js/cart.js') }}"></script>
 @endsection

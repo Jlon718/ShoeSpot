@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Orderinfo;
 use App\Models\Orderline;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
@@ -19,29 +20,47 @@ class CartController extends Controller
     {
         return view('carts.index');
     }
-
+       
+ // 
     /**
      * Show the form for creating a new resource.
      */
-    public function add_cart($id)
+
+    public function store(Request $request)
     {
-        $product = Product::findOrFail($id);
+        try {
+            $id = $request->product_id;
+            $product = Product::findOrFail($id);
 
-        $cart = session()->get('cart', []);
+            $cart = session()->get('cart', []);
 
-        if(isset($cart[$id])){
-            $cart[$id]['quantity']++;
-           
-        }else {
-            $cart[$id] = [
-                "product_name" => $product->product_name,
-                "image" => $product->image,
-                "sell_price" => $product->sell_price,
-                "quantity" => 1
-            ];
+            if (isset($cart[$id])) {
+                $cart[$id]['quantity']++;
+            } else {
+                $cart[$id] = [
+                    "product_name" => $product->product_name,
+                    "image" => 'customer/images/product-item1.jpg',
+                    "sell_price" => $product->sell_price,
+                    "quantity" => 1
+                ];
+            }
+
             session()->put('cart', $cart);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product added to cart successfully!',
+                'redirect_url' => route('home'),
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Error adding product to cart: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to add product to cart!',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        return redirect()->back()->with('success', 'Product add to cart successfully!');
     }
 
     /**
@@ -70,17 +89,18 @@ class CartController extends Controller
         }
 
         // Clear the cart after checkout
-        $email = auth()->user()->email;
-        $customer = Customer::where('user_id', auth()->user()->id)->first();
-        $orderinfo = Orderinfo::where('customer_id', $customer->customer_id)->latest('orderinfo_id')->first();
-        $orderlines = Orderline::where('orderinfo_id', $orderinfo->orderinfo_id)->get();
-        // Send the email using the TransactionReceipt mailable
-        Mail::to($email)->send(new Receipt($customer, $orderinfo, $orderlines));
+        // $email = auth()->user()->email;
+        // $customer = Customer::where('user_id', auth()->user()->id)->first();
+        // $orderinfo = Orderinfo::where('customer_id', $customer->customer_id)->latest('orderinfo_id')->first();
+        // $orderlines = Orderline::where('orderinfo_id', $orderinfo->orderinfo_id)->get();
+        // // Send the email using the TransactionReceipt mailable
+        // Mail::to($email)->send(new Receipt($customer, $orderinfo, $orderlines));
         session()->forget('cart');
 
         // You can redirect the user to a success page or any other page
         return redirect()->route('home')->with('success', 'Order placed successfully!');
     }
+
 
     /**
      * Display the specified resource.

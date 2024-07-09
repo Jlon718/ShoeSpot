@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\StockController;
 
@@ -27,4 +29,6 @@ Route::apiResource('brand', BrandController::class);
 Route::apiResource('stock', StockController::class);
 Route::apiResource('availableProduct', IndivProductController::class)->only(['index']);
 Route::apiResource('registration', RegisterController::class);
+Route::apiResource('homepage', HomeController::class);
+Route::apiResource('cart', CartController::class);
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');

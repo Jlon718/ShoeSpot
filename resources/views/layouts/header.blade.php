@@ -11,15 +11,23 @@
     <meta name="author" content="">
     <meta name="keywords" content="">
     <meta name="description" content="">
-    <meta http-equiv="refresh" content="">
 
-    
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('customer/css/bootstrap.min.css') }}">
+
     <!-- Font Awesome CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('customer/style.css') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -27,16 +35,11 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Custom JS -->
+    <script src="{{ asset('admin/js/home.js') }}"></script>
+    <script src="{{ asset('admin/js/cart.js') }}"></script>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('customer/style.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@300;400;700&display=swap"
-        rel="stylesheet">
-    <!-- script
-    ================================================== -->
+    <!-- Modernizr JS -->
     <script src="js/modernizr.js"></script>
 </head>
 
@@ -331,7 +334,7 @@
                             @endif
                             <div class="row">
                                 <div class="col-lg-12 col-sm-12 text-center checkout">
-                                    <a href="{{route('cart')}}" class="btn btn-primary btn btn-block">View all</a>
+                                    <a href="/carts" class="btn btn-primary btn btn-block">View all</a>
                                 </div>
                             </div>
                         </div>
@@ -359,11 +362,6 @@
     <script type="text/javascript" src="{{ asset('customer/js/bootstrap.bundle.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('customer/js/plugins.js') }}"></script>
     <script type="text/javascript" src="{{ asset('customer/js/script.js') }}"></script>
-    <script>
-        $(document).ready(function(){
-            $('.dropdown-toggle').dropdown();
-        });
-    </script>
 </body>
 
 </html>
