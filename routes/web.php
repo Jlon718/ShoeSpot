@@ -64,10 +64,11 @@ Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
 
 Route::prefix('/products')->group(function () {
     Route::view('','admin.products.index');
-    // Route::get('/{product}', [IndivProductController::class, 'index'])->name('products.info');
-    // Route::get('/{product}/order', [OrderController::class, 'create'])->name('products.order');
-    // Route::POST('/store', [OrderController::class, 'store'])->name('orders.store');
 })->middleware(['auth', 'signed']);
+
+Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () {
+    Route::view('','admin.suppliers.index');
+});
 
 Route::prefix('/carts')->group(function () {
     Route::GET('', [CartController::class, 'index'])->name('cart');

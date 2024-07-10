@@ -10,6 +10,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,4 +34,5 @@ Route::apiResource('registration', RegisterController::class);
 Route::apiResource('homepage', HomeController::class);
 Route::apiResource('cart', CartController::class);
 Route::apiResource('product', ProductController::class);
+Route::apiResource('supplier', SupplierController::class);
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');
