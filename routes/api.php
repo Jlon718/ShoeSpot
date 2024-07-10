@@ -28,7 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('brand', BrandController::class);
 Route::apiResource('stock', StockController::class);
 Route::apiResource('availableProduct', IndivProductController::class)->only(['index']);
+Route::apiResource('availableBrand', IndivProductController::class)->only(['index']);
 Route::apiResource('registration', RegisterController::class);
 Route::apiResource('homepage', HomeController::class);
 Route::apiResource('cart', CartController::class);
+Route::apiResource('product', ProductController::class);
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');

@@ -55,15 +55,18 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::prefix('/brands')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.brands.index');
 });
+Route::post('brand/import', [App\Http\Controllers\BrandController::class,'brandsImport']);
+Route::get('brand/import', [App\Http\Controllers\BrandController::class,'index']);
 
 Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.stocks.index');
 });
 
 Route::prefix('/products')->group(function () {
-    Route::get('/{product}', [IndivProductController::class, 'index'])->name('products.info');
-    Route::get('/{product}/order', [OrderController::class, 'create'])->name('products.order');
-    Route::POST('/store', [OrderController::class, 'store'])->name('orders.store');
+    Route::view('','admin.products.index');
+    // Route::get('/{product}', [IndivProductController::class, 'index'])->name('products.info');
+    // Route::get('/{product}/order', [OrderController::class, 'create'])->name('products.order');
+    // Route::POST('/store', [OrderController::class, 'store'])->name('orders.store');
 })->middleware(['auth', 'signed']);
 
 Route::prefix('/carts')->group(function () {

@@ -7,6 +7,11 @@
     <div class="card-body" style="height: 210px;">
         <input type="text" id="itemSearch" placeholder="--search--">
     </div>
+    <form action="{{ url('brand/import') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="item_upload" class="form-control"/>
+        <button type="submit" class="btn btn-primary">Import Excel File</button>
+    </form>
     <div class="table-responsive">
         <table id="itable" class="table table-striped table-hover">
             <thead>

@@ -17,7 +17,7 @@
 
         <!--product-->
         <li class="nav-item">
-            <a class="nav-link" href="{{ url('admin/product/') }}">
+            <a class="nav-link" href="/products">
                 <i class="mdi mdi-package menu-icon"></i>
                 <span class="menu-title">Product</span>
                 {{-- <i class="menu-arrow"></i> --}}
