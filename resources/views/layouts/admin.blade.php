@@ -92,6 +92,7 @@
     <script src="{{ asset('admin/js/stock.js') }}"></script>
     <script src="{{ asset('admin/js/product.js') }}"></script>
     <script src="{{ asset('admin/js/supplier.js') }}"></script>
+    <script src="{{ asset('admin/js/user.js') }}"></script>
 
 </body>
 

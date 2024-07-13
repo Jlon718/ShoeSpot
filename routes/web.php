@@ -94,11 +94,12 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 
 //==========================================================================================
-Route::prefix('/customer')->group(function () {
-    Route::get('/cusmanage', [customerprof::class, 'customerprof']);
-//customer profile
-    Route::put('/{customer}/update', [customerprof::class, 'update'])->name('customer.profile.update');
-    Route::get('/shop', [ShopController::class, 'shop']);
+Route::prefix('/users')->group(function () {
+    Route::view('', 'admin.users.index');
+//     Route::get('/cusmanage', [customerprof::class, 'customerprof']);
+// //customer profile
+//     Route::put('/{customer}/update', [customerprof::class, 'update'])->name('customer.profile.update');
+//     Route::get('/shop', [ShopController::class, 'shop']);
 })->middleware(['auth', 'signed']);
 //(Customer side)
 

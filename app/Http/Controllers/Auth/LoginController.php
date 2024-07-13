@@ -54,14 +54,18 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
-            $redirectUrl = $user->role_as == '1' ? route('admin.dashboard') : route('home');
-            $token = $user->createToken('api-token')->plainTextToken;
-            $request->session()->regenerate();
-            $request->session()->put('api-token', $token);
-    
-            return response()->json(['message' => 'Logged in successfully', 'redirect_url' => $redirectUrl], 200);
+            if ($user->status =='1'){
+                $redirectUrl = $user->role_as == '1' ? route('admin.dashboard') : route('home');
+                $token = $user->createToken('api-token')->plainTextToken;
+                $request->session()->regenerate();
+                $request->session()->put('api-token', $token);
+        
+                return response()->json(['message' => 'Logged in successfully', 'redirect_url' => $redirectUrl], 200);
+            } else {
+                Auth::logout();
+                return response()->json(['message' => 'Your account is deactivated. Please contact support.'], 403);
+            }
         }
-    
         return response()->json(['error' => 'Invalid credentials'], 401);
     }
 }
