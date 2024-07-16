@@ -25,6 +25,8 @@
                     <th>Sell Price</th>
                     <th>Cost Price</th>
                     <th>Images</th>
+                    <th>Stock</th>
+                    <th>Supplier</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -65,6 +67,16 @@
                     <div class="form-group">
                         <label for="cost_price" class="control-label">Cost Price</label>
                         <input type="text" class="form-control" id="cost_price" name="cost_price">
+                    </div>
+                    <div class="form-group">
+                        <label for="cost_price" class="control-label">Stock</label>
+                        <input type="text" class="form-control" id="quantity" name="quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="brand_name" class="control-label">Supplier</label>
+                        <select class="form-control" id="supplier_name" name="supplier_name">
+                            <!-- Options will be populated dynamically -->
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="images">Images:</label>

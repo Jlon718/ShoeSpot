@@ -33,6 +33,23 @@ $(document).ready(function () {
                     return imagesHtml;
                 }
             },
+            { 
+                data: 'stock.quantity', 
+                defaultContent: 'No stock',
+                render: function(data, type, row) {
+                    return data !== null ? data : 'No stock';
+                }
+            },
+            { 
+                data: 'stock.suppliers',
+                defaultContent: 'No suppliers',
+                render: function(data, type, row) {
+                    if (data && data.length > 0) {
+                        return data.map(supplier => supplier.supplier_name).join(', ');
+                    }
+                    return 'No suppliers';
+                }
+            },
             {
                 data: null,
                 render: function (data, type, row) {
@@ -101,6 +118,109 @@ $(document).ready(function () {
                 console.error(xhr.responseText);
             }
         });
+
+        $.ajax({
+            url: "/api/supplier", // Endpoint to fetch products
+            method: "GET",
+            success: function(data) {
+                var supplierSelect = $('#supplier_name');
+                supplierSelect.empty(); // Clear previous options
+                supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
+                data.forEach(function(suppliers) {
+                    supplierSelect.append(new Option(suppliers.supplier_name, suppliers.supplier_id));
+                });
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    $('#ptable').on('click', 'a.editBtn', function (e) {
+        e.preventDefault();
+        console.log('Edit button clicked');
+    
+        // Clear previous data and reset the form
+        $('#productId').remove();
+        $("#pform").trigger("reset");
+        $('#existingImages').remove(); // Clear existing images
+    
+        var id = $(this).data('id');
+        console.log('Product ID:', id);
+    
+        // Add hidden input for product ID
+        $('<input>').attr({ type: 'hidden', id: 'productId', name: 'product_id', value: id }).appendTo('#pform');
+    
+        // Show modal
+        $('#productModal').modal('show');
+        $('#productSubmit').hide();
+        $('#productUpdate').show();
+    
+        // Fetch product details
+        $.ajax({
+            type: "GET",
+            url: `http://localhost:8000/api/product/${id}`,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (data) {
+                console.log('Data received:', data);
+    
+                var brandSelect = $('#brand_name');
+                brandSelect.empty(); // Clear previous options
+                brandSelect.append('<option value="">Select a brand</option>'); // Default option
+                if (data.brands) {
+                    data.brands.forEach(function (brand) {
+                        var option = new Option(brand.name, brand.brand_id);
+                        if (brand.brand_id == data.product.brand_id) {
+                            option.selected = true; // Set the selected option
+                        }
+                        brandSelect.append(option);
+                    });
+                }
+    
+            var supplierSelect = $('#supplier_name');
+            supplierSelect.empty(); // Clear previous options
+            supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
+            if (data.suppliers) {
+                data.suppliers.forEach(function (supplier) {
+                    var option = new Option(supplier.supplier_name, supplier.supplier_id);
+                    supplierSelect.append(option);
+                });
+
+                if (data.product.stock && data.product.stock.suppliers) {
+                    data.product.stock.suppliers.forEach(function (supplier) {
+                        supplierSelect.find('option[value="' + supplier.supplier_id + '"]').prop('selected', true);
+                    });
+                }
+            }
+    
+                $('#product_name').val(data.product.product_name);
+                $('#brand_name').val(data.product.brand_id);
+                $('#description').val(data.product.description);
+                $('#sell_price').val(data.product.sell_price);
+                $('#cost_price').val(data.product.cost_price);
+    
+                // Handle stock quantity
+                if (data.product.stock) {
+                    $('#quantity').val(data.product.stock.quantity);
+                } else {
+                    $('#quantity').val('');
+                }
+    
+                // Append existing images
+                if (data.images && data.images.length > 0) {
+                    var imageContainer = $('<div id="existingImages" class="form-group"><label>Existing Images:</label></div>');
+                    data.images.forEach(image => {
+                        var imagePath = image.image_path;
+                        imageContainer.append(`<img src="${imagePath}" width="200px" height="200px" class="existingImage" />`);
+                    });
+                    $('#pform').append(imageContainer);
+                }
+            },
+            error: function (error) {
+                console.log('Error:', error);
+            }
+        });
     });
 
     $("#productSubmit").on('click', function (e) {
@@ -119,73 +239,17 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 $("#productModal").modal("hide");
-                var $ptable = $('#ptable').DataTable();
-                $ptable.ajax.reload();
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#ptable').on('click', 'a.editBtn', function (e) {
-        e.preventDefault();
-        console.log('Edit button clicked');
-
-        // Remove previous images and hidden product ID input
-        // $('#images').remove();
-        $('#productId').remove();
-        $("#pform").trigger("reset");
-        $('#existingImages').remove(); // Clear existing images
-
-        var id = $(this).data('id');
-        console.log('Product ID:', id);
-
-        // Add hidden input for product ID
-        $('<input>').attr({ type: 'hidden', id: 'productId', name: 'product_id', value: id }).appendTo('#pform');
-
-        // Show modal
-        $('#productModal').modal('show');
-        $('#productSubmit').hide();
-        $('#productUpdate').show();
-
-        // Fetch product details
-        $.ajax({
-            type: "GET",
-            url: `http://localhost:8000/api/product/${id}`,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log('Data received:', data);
-                var brandSelect = $('#brand_name');
-                brandSelect.empty(); // Clear previous options
-                brandSelect.append('<option value="">Select a brand</option>'); // Default option
-                data.brands.forEach(function (brand) {
-                    var option = new Option(brand.name, brand.brand_id);
-                    if (brand.brand_id == data.product.brand_id) {
-                        option.selected = true; // Set the selected option
-                    }
-                    brandSelect.append(option);
-                });
-                $('#product_name').val(data.product.product_name);
-                $('#brand_name').val(data.product.brand_id);
-                $('#description').val(data.product.description);
-                $('#sell_price').val(data.product.sell_price);
-                $('#cost_price').val(data.product.cost_price);
-
-                // Append existing images
-                if (data.images && data.images.length > 0) {
-                    var imageContainer = $('<div id="existingImages" class="form-group"><label>Existing Images:</label></div>');
-                    data.images.forEach(image => {
-                        // Use the correct image path
-                        var imagePath = image.image_path;
-                        imageContainer.append(`<img src="${imagePath}" width="200px" height="200px" class="existingImage" />`);
-                    });
-                    $('#pform').append(imageContainer);
+                
+                // Ensure #ptable is initialized and then reload
+                if ($.fn.DataTable.isDataTable('#ptable')) {
+                    var $ptable = $('#ptable').DataTable();
+                    $ptable.ajax.reload();
+                } else {
+                    console.error("Error: DataTable #ptable is not initialized.");
                 }
             },
             error: function (error) {
-                console.log('Error:', error);
+                console.error("Error in AJAX request:", error);
             }
         });
     });

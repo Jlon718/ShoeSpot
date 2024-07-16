@@ -16,4 +16,9 @@ class Supplier extends Model
         'phone_number',
         'address',
     ];
+
+    public function stocks()
+    {
+        return $this->belongsToMany(Stock::class);
+    }
 }

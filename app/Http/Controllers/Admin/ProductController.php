@@ -4,22 +4,29 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Brand;
 use App\Models\Image;
+use App\Models\Stock;
 use App\Models\Product;
+use App\Models\Stockline;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\ProductCollection;
-
+use App\Models\Supplier;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
         $page = $request->get('page', 1);
-        $products = Product::with('images')->skip(($page - 1) * 10)->take(10)->get();
-        $end = $products->count() < 10;
 
+        $products = Product::with(['images', 'stock.suppliers'])
+            ->skip(($page - 1) * 10)
+            ->take(10)
+            ->get();
+    
+        $end = $products->count() < 10;
+    
         return response()->json([
             'data' => $products,
             'end' => $end,
@@ -33,6 +40,7 @@ class ProductController extends Controller
             'description' => 'required',
             'sell_price' => 'required|numeric',
             'cost_price' => 'required|numeric',
+            'quantity' => 'required|numeric',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -55,6 +63,16 @@ class ProductController extends Controller
             }
         }
 
+        $stock = new Stock();
+        $stock->product_id = $product->product_id;
+        $stock->quantity = $request->quantity;
+        $stock->save();
+
+        $stockline = new Stockline();
+        $stockline->stock_id = $stock->stock_id;
+        $stockline->supplier_id = $request->supplier_name;
+        $stockline->save();     
+
         return response()->json([
             'message' => 'Product created successfully',
             'product' => $product,
@@ -64,12 +82,14 @@ class ProductController extends Controller
 
     public function show(string $id)
     {
-        $product = Product::with('images')->where('product_id', $id)->first();
-        $brands = Brand::all();
+        $product = Product::with(['images', 'stock.suppliers'])->where('product_id', $id)->first();
         if ($product) {
+            $brands = Brand::all();
+            $suppliers = Supplier::all();
             return response()->json([
                 'product' => $product,
-                'brands' => $brands,
+                'brands' => $brands,  // Fixed to include all brands
+                'suppliers' => $suppliers,  // Fixed to include all suppliers
                 'images' => $product->images->map(function ($image) {
                     return [
                         'image_path' => asset('storage/images/' . basename($image->image_path))
