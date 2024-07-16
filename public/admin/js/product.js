@@ -16,6 +16,7 @@ $(document).ready(function () {
                 }
             }
         ],
+
         columns: [
             { data: 'product_id' },
             { data: 'product_name' },
@@ -233,10 +234,13 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data.message);
+            if (data.status === 200) {
                 $("#productModal").modal("hide");
-                var $ptable = $('#ptable').DataTable();
-                // $itable.row.add(data.results).draw(false);
-                $ptable.ajax.reload()
+                location.reload();
+            } else {
+                console.error("Error: Invalid response status:", data.status);
+            }
+
             },
             error: function (error) {
                 console.error("Error in AJAX request:", error);

@@ -24,7 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with(['images', 'stock.suppliers'])
+        ->whereHas('stock', function ($query) {
+            $query->where('quantity', '>', 1);
+        })
+        ->get();
         return response()->json($products);
     }
 }
