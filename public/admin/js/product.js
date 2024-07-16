@@ -178,21 +178,16 @@ $(document).ready(function () {
                     });
                 }
     
-            var supplierSelect = $('#supplier_name');
-            supplierSelect.empty(); // Clear previous options
-            supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
-            if (data.suppliers) {
+                var supplierSelect = $('#supplier_name');
+                supplierSelect.empty(); // Clear previous options
+                supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
                 data.suppliers.forEach(function (supplier) {
                     var option = new Option(supplier.supplier_name, supplier.supplier_id);
+                    if (supplier.supplier_id == data.product.supplier.supplier_id) {
+                        option.selected = true; // Set the selected option
+                    }
                     supplierSelect.append(option);
                 });
-
-                if (data.product.stock && data.product.stock.suppliers) {
-                    data.product.stock.suppliers.forEach(function (supplier) {
-                        supplierSelect.find('option[value="' + supplier.supplier_id + '"]').prop('selected', true);
-                    });
-                }
-            }
     
                 $('#product_name').val(data.product.product_name);
                 $('#brand_name').val(data.product.brand_id);
@@ -237,16 +232,11 @@ $(document).ready(function () {
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                console.log(data.message);
                 $("#productModal").modal("hide");
-                
-                // Ensure #ptable is initialized and then reload
-                if ($.fn.DataTable.isDataTable('#ptable')) {
-                    var $ptable = $('#ptable').DataTable();
-                    $ptable.ajax.reload();
-                } else {
-                    console.error("Error: DataTable #ptable is not initialized.");
-                }
+                var $ptable = $('#ptable').DataTable();
+                // $itable.row.add(data.results).draw(false);
+                $ptable.ajax.reload()
             },
             error: function (error) {
                 console.error("Error in AJAX request:", error);

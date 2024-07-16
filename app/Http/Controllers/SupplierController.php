@@ -6,6 +6,10 @@ use App\Models\Brand;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\SuppliersImport;
+use App\Imports\BrandsImport;
+use Illuminate\Support\Facades\Storage;
 
 class SupplierController extends Controller
 {
@@ -77,4 +81,26 @@ class SupplierController extends Controller
         $supplier->delete();
         return response()->json(['message' => 'Supplier deleted successfully']);
     }
+
+    public function suppliersImport(Request $request)
+    {
+        $request->validate([
+            'item_upload' => [
+                'required',
+                'file'
+            ],
+        ]);
+
+        try {
+            Excel::import(new SuppliersImport, $request->file('item_upload'));
+            
+            // Import successful, now redirect
+            return redirect('/suppliers')->with('success', 'File imported successfully');
+            
+        } catch (\Exception $e) {
+            // Handle import failure, if needed
+            return redirect()->back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
+    }
+
 }

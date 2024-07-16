@@ -78,6 +78,9 @@ Route::prefix('/carts')->group(function () {
     Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
 })->middleware(['auth', 'signed']);
 
+Route::post('supplier/import', [App\Http\Controllers\SupplierController::class,'suppliersImport']);
+Route::get('supplier/import', [App\Http\Controllers\SupplierController::class,'index']);
+
 Route::prefix('/mail')->group(function () {
     Route::GET('/send', [MailController::class, 'sendMail'])->name('sendMail');
 })->middleware(['auth', 'signed']);
