@@ -37,4 +37,6 @@ Route::apiResource('cart', CartController::class);
 Route::apiResource('product', ProductController::class);
 Route::apiResource('supplier', SupplierController::class);
 Route::apiResource('user', UserController::class);
+Route::get('all-brands', [BrandController::class, 'getAll']);
+Route::get('all-suppliers', [SupplierController::class, 'getAll']);
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');

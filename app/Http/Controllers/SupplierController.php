@@ -13,15 +13,22 @@ use Illuminate\Support\Facades\Storage;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = Supplier::all();
-        return response()->json($suppliers);
+        $page = $request->get('page', 1);
+
+        $suppliers = Supplier::skip(($page - 1)*10)
+        ->take(10)
+        ->get();
+        $end = $suppliers->count() <10;
+        return response()->json([
+            'data' => $suppliers,
+            'end' => $end,
+        ]);
     }
 
     public function store(Request $request)
     {
-        try{
         $validatedData = $request->validate([
             'supplier_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:suppliers',
@@ -37,11 +44,7 @@ class SupplierController extends Controller
 
         $supplier->save();
 
-        return response()->json(['message' => 'Supplier added successfully', 'supplier' => $supplier]);
-        } catch (\Exception $e) {
-            Log::error('Error saving supplier: ' . $e->getMessage());
-            return response()->json(['error' => 'Error saving supplier.'], 500);
-        }
+        return response()->json(['success' => 'Supplier created successfully']);
     }
 
     public function show($id)
@@ -101,6 +104,12 @@ class SupplierController extends Controller
             // Handle import failure, if needed
             return redirect()->back()->with('error', 'Error importing file: ' . $e->getMessage());
         }
+    }
+
+    public function getAll()
+    {
+        $suppliers = Supplier::all();
+        return response()->json([ 'data' => $suppliers]);
     }
 
 }

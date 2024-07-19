@@ -14,10 +14,18 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $brands = Brand::all();
-        return response()->json($brands);
+        $page = $request->get('page', 1);
+        $brands = Brand::skip(($page - 1) * 10)
+        ->take(10)
+        ->get();
+        $end = $brands->count() < 10;
+
+        return response()->json([
+            'data' => $brands,
+            'end' => $end,
+        ]);
     }
 
     /**
@@ -56,11 +64,7 @@ class BrandController extends Controller
     $brand->save();
 
     // Return a JSON response indicating success
-    return response()->json([
-        'message' => 'Brand created successfully',
-        'brand' => $brand,
-        'status' => 200
-    ]);
+    return response()->json(['success' => 'Brand created successfully']);
 }
 
 
@@ -103,7 +107,7 @@ class BrandController extends Controller
         $brand->update($validatedData);
     
         // Redirect back with success message
-        return response()->json(["success" => "brand updated successfully.", "brand" => $brand, "status" => 200]);
+        return response()->json(['success' => 'Brand updated successfully']);
     }
 
     /**
@@ -136,5 +140,11 @@ class BrandController extends Controller
             return redirect()->back()->with('error', 'Error importing file: ' . $e->getMessage());
         }
 
+    }
+
+    public function getAll()
+    {
+        $brands = Brand::all();
+        return response()->json(['data' => $brands]);
     }
 }

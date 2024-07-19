@@ -7,12 +7,17 @@ use App\Models\Image;
 use App\Models\Stock;
 use App\Models\Product;
 use App\Models\Stockline;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\ProductCollection;
-use App\Models\Supplier;
+use App\Imports\ProductsImport;
+use App\Imports\SuppliersImport;
+use App\Imports\BrandsImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -154,5 +159,26 @@ class ProductController extends Controller
         $product->delete();
         $data = array('success' => 'deleted', 'code' => 200);
             return response()->json($data);
+    }
+
+    public function productsImport(Request $request)
+    {
+        $request->validate([
+            'item_upload' => [
+                'required',
+                'file'
+            ],
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('item_upload'));
+            
+            // Import successful, now redirect
+            return redirect('/products')->with('success', 'File imported successfully');
+            
+        } catch (\Exception $e) {
+            // Handle import failure, if needed
+            return redirect()->back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
     }
 }

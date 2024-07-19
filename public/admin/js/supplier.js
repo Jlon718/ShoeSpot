@@ -1,24 +1,13 @@
 $(document).ready(function () {
-    var table = $('#suptable').DataTable({
+    let table = $('#suptable').DataTable({
+        paging: false,
         ajax: {
-            url: "/api/supplier",
-            dataSrc: ""
-        },
-        dom: 'Bfrtip',
-        buttons: [
-            'pdf',
-            'excel',
-            {
-                text: 'Add supplier',
-                className: 'btn btn-primary',
-                action: function (e, dt, node, config) {
-                    $("#supform").trigger("reset");
-                    $('#supModal').modal('show');
-                    $('#supUpdate').hide();
-                    $('#supSubmit').show();
-                }
+            url: '/api/supplier',
+            data: function(d) {
+                // Add additional data if needed
+                return $.extend({}, d, { additionalParam: 'value' });
             }
-        ],
+        },
         columns: [
             { data: 'supplier_id' },
             { data: 'supplier_name' },
@@ -33,11 +22,60 @@ $(document).ready(function () {
             }
         ],
     });
+    
+    
+    let currentPage = 1;
+    let loading = false;
+    let endOfData = false;
+
+    function loadMoreData() {
+        if (loading || endOfData) return;
+
+        loading = true;
+        currentPage++;
+
+        $.ajax({
+            url: `/api/supplier?page=${currentPage}`,
+            method: 'GET',
+            success: function(json) {
+                if (json.data.length === 0) {
+                    endOfData = true;
+                } else {
+                    json.data.forEach(brand => table.row.add(brand).draw(false));
+                }
+                loading = false;
+            },
+            error: function() {
+                loading = false;
+            }
+        });
+    }
+
+    $(window).on('scroll', function() {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50) {
+            loadMoreData();
+        }
+    });
+
+
+    $("#supAdd").on('click', function (e) {
+        $("#iform").trigger("reset");
+        $("#nameError").hide();
+        $("#emailError").hide();
+        $("#phoneError").hide();
+        $("#addressError").hide();
+        $("#supSubmit").show();
+        $("#supUpdate").hide();
+    });
 
     $("#supSubmit").on('click', function (e) {
         e.preventDefault();
-        var data = $('#supform')[0];
+        if (validateForm()){
+            var data = $('#supform')[0];
         let formData = new FormData(data);
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
         $.ajax({
             type: "POST",
             url: "/api/supplier",
@@ -48,20 +86,32 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
-                $("#supModal").modal("hide");
-                table.ajax.reload(); // Reload the DataTable data
+                $('#alertContainer').empty();
+                $("#supModal").hide();
+                $(".modal-backdrop").remove(); 
+                var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                    data.success +
+                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                '</div>';
+
+                $('#alertContainer').html(alertHtml);
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
             },
             error: function (error) {
                 console.log(error);
                 alert("Error: Could not save supplier. Please check the console for more details.");
             }
         });
+        }
+        
     });
 
     $('#suptable tbody').on('click', 'a.editBtn', function (e) {
         e.preventDefault();
+        $('#supplierId').remove()
         $("#supform").trigger("reset");
-
         var id = $(this).data('id');
         $('#supModal').modal('show');
         $('#supSubmit').hide();
@@ -87,29 +137,41 @@ $(document).ready(function () {
 
     $("#supUpdate").on('click', function (e) {
         e.preventDefault();
-        var id = $('#supplierId').val();
-        var data = $('#supform')[0];
-        let formData = new FormData(data);
-        formData.append("_method", "PUT");
-        
-        $.ajax({
-            type: "POST",
-            url: `/api/supplier/${id}`,
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log(data);
-                $('#supModal').modal("hide");
-                table.ajax.reload();
-            },
-            error: function (error) {
-                console.log(error);
-                alert("Error: Could not update supplier. Please check the console for more details.");
-            }
-        });
+        if (validateForm()){
+            var id = $('#supplierId').val();
+            var data = $('#supform')[0];
+            let formData = new FormData(data);
+            formData.append("_method", "PUT");
+            
+            $.ajax({
+                type: "POST",
+                url: `/api/supplier/${id}`,
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $('#alertContainer').empty();
+                    $("#supModal").hide();
+                    $(".modal-backdrop").remove(); 
+                    var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                        data.success +
+                                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                    '</div>';
+    
+                    $('#alertContainer').html(alertHtml);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert("Error: Could not update supplier. Please check the console for more details.");
+                }
+            });
+        }
     });
 
     $('#suptable tbody').on('click', 'a.deletebtn', function (e) {
@@ -153,4 +215,53 @@ $(document).ready(function () {
             }
         });
     });
+
+    function validateForm() {
+        let isValid = true;
+    
+        const name = $("#supplier_name").val();
+        if (!name || name.length < 3) {
+            $("#nameError").text("Name must be at least 2 characters long.").show();
+            isValid = false;
+        } else {
+            $("#nameError").hide();
+        }
+
+        const email = $("#email").val();
+        if (!email || !isValidEmail(email)) {
+            $("#emailError").text("Please enter a valid email address.").show();
+            isValid = false;
+        } else {
+            $("#emailError").hide();
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        const phone = $("#phone_number").val();
+        if (!phone || !isValidPHPhoneNumber(phone)) {
+            $("#phoneError").text("Please enter a valid Philippine SIM number.").show();
+            isValid = false;
+        } else {
+            $("#phoneError").hide();
+        }
+        
+        function isValidPHPhoneNumber(phone) {
+            // Regular expression for Philippine phone number validation
+            const phoneRegex = /^9\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
+        const address = $("#address").val();
+        if (!address) {
+            $("#addressError").text("Address is required.").show();
+            isValid = false;
+        } else {
+            $("#addressError").hide();
+        }
+    
+        return isValid;
+    }
 });

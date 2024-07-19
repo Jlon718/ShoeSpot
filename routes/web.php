@@ -65,6 +65,8 @@ Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::prefix('/products')->group(function () {
     Route::view('','admin.products.index');
 })->middleware(['auth', 'signed']);
+Route::post('product/import', [ProductController::class, 'productsImport']);
+Route::get('product/import', [ProductController::class, 'index']);
 
 Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.suppliers.index');

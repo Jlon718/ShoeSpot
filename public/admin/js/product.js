@@ -1,22 +1,13 @@
 $(document).ready(function () {
     let table = $('#ptable').DataTable({
         paging: false,
-        dom: 'Bfrtip',
-        buttons: [
-            'pdf',
-            'excel',
-            {
-                text: 'Add product',
-                className: 'btn btn-primary',
-                action: function (e, dt, node, config) {
-                    $("#pform").trigger("reset");
-                    $('#productModal').modal('show');
-                    $('#productUpdate').hide();
-                    $('#productImage').remove();
-                }
+        ajax: {
+            url: '/api/product',
+            data: function(d) {
+                // Add additional data if needed
+                return $.extend({}, d, { additionalParam: 'value' });
             }
-        ],
-
+        },
         columns: [
             { data: 'product_id' },
             { data: 'product_name' },
@@ -93,42 +84,33 @@ $(document).ready(function () {
         }
     });
 
-    // Initial data load
-    $.ajax({
-        url: "/api/product?page=1",
-        method: 'GET',
-        success: function (json) {
-            json.data.forEach(product => table.row.add(product).draw(false));
-        }
-    });
 
     $('#productAdd').on('click', function(e) {
-        
         $.ajax({
-            url: "/api/brand", // Endpoint to fetch products
+            url: "/api/all-brands", // Endpoint to fetch all brands
             method: "GET",
-            success: function(data) {
+            success: function(response) {
                 var brandSelect = $('#brand_name');
                 brandSelect.empty(); // Clear previous options
                 brandSelect.append('<option value="">Select a brand</option>'); // Default option
-                data.forEach(function(brands) {
-                    brandSelect.append(new Option(brands.name, brands.brand_id));
+                response.data.forEach(function(brand) {
+                    brandSelect.append(new Option(brand.name, brand.brand_id));
                 });
             },
             error: function(xhr) {
                 console.error(xhr.responseText);
             }
         });
-
+    
         $.ajax({
-            url: "/api/supplier", // Endpoint to fetch products
+            url: "/api/all-suppliers", // Endpoint to fetch all suppliers
             method: "GET",
-            success: function(data) {
+            success: function(response) {
                 var supplierSelect = $('#supplier_name');
                 supplierSelect.empty(); // Clear previous options
                 supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
-                data.forEach(function(suppliers) {
-                    supplierSelect.append(new Option(suppliers.supplier_name, suppliers.supplier_id));
+                response.data.forEach(function(supplier) {
+                    supplierSelect.append(new Option(supplier.supplier_name, supplier.supplier_id));
                 });
             },
             error: function(xhr) {
@@ -184,7 +166,7 @@ $(document).ready(function () {
                 supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
                 data.suppliers.forEach(function (supplier) {
                     var option = new Option(supplier.supplier_name, supplier.supplier_id);
-                    if (supplier.supplier_id == data.product.supplier.supplier_id) {
+                    if (supplier.supplier_id == data.product.supplier_id) {
                         option.selected = true; // Set the selected option
                     }
                     supplierSelect.append(option);
@@ -221,31 +203,33 @@ $(document).ready(function () {
 
     $("#productSubmit").on('click', function (e) {
         e.preventDefault();
-        var data = $('#pform')[0];
-        let formData = new FormData(data);
+        if (validateForm()){
+            var data = $('#pform')[0];
+            let formData = new FormData(data);
+        
+            $.ajax({
+                type: "POST",
+                url: "/api/product",
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data.message);
+                if (data.status === 200) {
+                    $("#productModal").modal("hide");
+                    location.reload();
+                } else {
+                    console.error("Error: Invalid response status:", data.status);
+                }
     
-        $.ajax({
-            type: "POST",
-            url: "/api/product",
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log(data.message);
-            if (data.status === 200) {
-                $("#productModal").modal("hide");
-                location.reload();
-            } else {
-                console.error("Error: Invalid response status:", data.status);
-            }
-
-            },
-            error: function (error) {
-                console.error("Error in AJAX request:", error);
-            }
-        });
+                },
+                error: function (error) {
+                    console.error("Error in AJAX request:", error);
+                }
+            });
+        }
     });
     
 
@@ -326,5 +310,93 @@ $(document).ready(function () {
             }
         });
     });
+
+    function validateForm() {
+        let isValid = true;
+    
+        const name = $("#product_name").val();
+        if (!name || name.length < 3) {
+            $("#nameError").text("Name must be at least 3 characters long.").show();
+            isValid = false;
+        } else {
+            $("#nameError").hide();
+        }
+
+        const brand = $("#brand_name").val();
+        if (!brand) {
+            $("#brandError").text("Please select a brand.").show();
+            isValid = false;
+        } else {
+            $("#brandError").hide();
+        }
+
+        const description = $("#description").val();
+        if (!description || description.length < 4) {
+            $("#descError").text("Please enter a description (at least 4 characters long).").show();
+            isValid = false;
+        } else {
+            $("#descError").hide();
+        }
+
+        const sellPrice = $("#sell_price").val();
+        const sellPriceNum = parseFloat(sellPrice);
+        if (isNaN(sellPriceNum) || sellPriceNum <= 1) {
+            $("#sellError").text("Sell price must be an integer greater than 1.").show();
+            isValid = false;
+        } else {
+            $("#sellPriceError").hide();
+        }
+
+        const costPrice = $("#cost_price").val();
+        const costPriceNum = parseFloat(costPrice);
+        if (isNaN(costPriceNum) || costPriceNum <= 1) {
+            $("#costError").text("Cost price must be an integer greater than 1.").show();
+            isValid = false;
+        } else {
+            $("#costError").hide();
+        }
+
+        const stock = $("#quantity").val();
+        const stockNum = parseFloat(stock);
+        if (isNaN(stockNum) || stockNum < 0) {
+            $("#stockError").text("Stock must be an integer greater than or equal to 0.").show();
+            isValid = false;
+        } else {
+            $("#stockError").hide();
+        }
+
+        const supplier = $("#supplier_name").val();
+        if (!supplier) {
+            $("#supplierError").text("Please select a supplier.").show();
+            isValid = false;
+        } else {
+            $("#supplierError").hide();
+        }
+    
+        const files = $("#images").prop('files');
+
+        if (files.length > 0) {
+            // Loop through all selected files
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileType = file.type.split('/').pop().toLowerCase();
+                const allowedExtensions = ['jpeg', 'png', 'jpg', 'gif', 'svg'];
+    
+                // Check if file type is valid
+                if ($.inArray(fileType, allowedExtensions) === -1) {
+                    $("#imagesError").text("Only image files (JPEG, PNG, JPG, GIF, SVG) are allowed.").show();
+                    isValid = false;
+                    break; // Exit loop on first invalid file
+                } else {
+                    $("#imagesError").hide();
+                }
+            }
+        } else {
+            // Hide the error if no file is selected since it's not required
+            $("#imageError").hide();
+        }
+    
+        return isValid;
+    }
 })
 

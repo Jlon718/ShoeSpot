@@ -1,8 +1,9 @@
 @extends('layouts.admin')
 
 @section('content')
-<div id="items" class="container">
-    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#supModal">Add <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+<div id="suppliers" class="container">
+    <div id="alertContainer" class="alert-container"></div>
+    <button type="button" id="supAdd" class="btn btn-info btn-lg" data-toggle="modal" data-target="#supModal">Add <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
     <div class="card-body" style="height: 210px;">
         <input type="text" id="supSearch" placeholder="--search--">
     </div>
@@ -25,6 +26,7 @@
             </thead>
             <tbody id="supbody"></tbody>
         </table>
+        <div id="scroll-end"></div>
     </div>
 </div>
 
@@ -36,22 +38,26 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="supform" method="#" action="#" enctype="multipart/form-data">
+                <form id="supform" method="#" action="#" nctype="multipart/form-data">
                     <div class="form-group">
                         <label for="supplier_name" class="control-label">Name</label>
                         <input type="text" class="form-control" id="supplier_name" name="supplier_name">
+                        <small id="nameError" class="form-text text-danger" style="display:none;">Please enter a supplier name (at least 3 characters long).</small>
                     </div>
                     <div class="form-group">
                         <label for="email" class="control-label">Email</label>
                         <input type="text" class="form-control" id="email" name="email">
+                        <small id="emailError" class="form-text text-danger" style="display:none;">Please enter a valid email address.</small>
                     </div>
                     <div class="form-group">
                         <label for="phone_number" class="control-label">Phone Number</label>
                         <input type="text" class="form-control" id="phone_number" name="phone_number">
+                        <small id="phoneError" class="form-text text-danger" style="display:none;">Please enter a phone number (09---------).</small>
                     </div>
                     <div class="form-group">
                         <label for="address" class="control-label">Address</label>
                         <input type="text" class="form-control" id="address" name="address">
+                        <small id="addressError" class="form-text text-danger" style="display:none;">Please enter an address.</small>
                     </div>
                 </form>
             </div>

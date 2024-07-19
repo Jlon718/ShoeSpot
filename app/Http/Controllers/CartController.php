@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Orderinfo;
 use App\Models\Orderline;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -80,11 +81,14 @@ class CartController extends Controller
 
         // Iterate over cart items and create order lines
         foreach(session('cart') as $id => $details) {
+            $stock = Stock::where('product_id', $id)->first();
+            $stock->quantity -= $details['quantity'];
+            $stock->save();
+    
             Orderline::create([
                 'orderinfo_id' => $orderInfo->orderinfo_id,
                 'product_id' => $id,
                 'quantity' => $details['quantity'],
-                // You might want to include the price at the time of purchase too
             ]);
         }
 
