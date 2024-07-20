@@ -16,3 +16,19 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: none; /* Initially hidden */
 }
+
+#supplier_name {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; /* Adjust the space between checkboxes */
+}
+
+.form-check {
+    display: flex;
+    align-items: center; /* Align items vertically */
+    margin-bottom: 10px; /* Adds space between rows */
+}
+
+.form-check-input {
+    margin-right: 10px; /* Adds space between the checkbox and the label */
+}

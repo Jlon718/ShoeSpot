@@ -41,12 +41,12 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name">
-                        <small id="nameError" class="form-text text-danger" style="display:none;">Please enter a brand name (at least 3 characters long).</small>
+                        <small id="nameError" class="form-text text-danger" style="display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label for="image" class="control-label">Image</label>
                         <input type="file" class="form-control" id="image" name="images">
-                        <small id="imageError" class="form-text text-danger" style="display:none;">Please select an image file.</small>
+                        <small id="imageError" class="form-text text-danger" style="display:none;"></small>
                     </div>
                 </form>
             </div>

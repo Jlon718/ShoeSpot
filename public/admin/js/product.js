@@ -26,18 +26,22 @@ $(document).ready(function () {
                 }
             },
             { 
-                data: 'stock.quantity', 
+                data: 'stock_quantity', 
                 defaultContent: 'No stock',
                 render: function(data, type, row) {
                     return data !== null ? data : 'No stock';
                 }
             },
             { 
-                data: 'stock.suppliers',
+                data: 'stock',
                 defaultContent: 'No suppliers',
-                render: function(data, type, row) {
+                render: function(data) {
                     if (data && data.length > 0) {
-                        return data.map(supplier => supplier.supplier_name).join(', ');
+                        // Assuming stock is an array and we are interested in the first stock item
+                        let stock = data[0];
+                        if (stock.suppliers && stock.suppliers.length > 0) {
+                            return stock.suppliers.map(supplier => supplier.supplier_name).join(', ');
+                        }
                     }
                     return 'No suppliers';
                 }
@@ -86,6 +90,17 @@ $(document).ready(function () {
 
 
     $('#productAdd').on('click', function(e) {
+        $("#nameError").hide();
+        $("#brandError").hide();
+        $("#descError").hide();
+        $("#sellError").hide();
+        $("#costError").hide();
+        $("#stockError").hide();
+        $("#supplierError").hide();
+        $("#imagesError").hide();
+        $('#productId').remove();
+        $("#pform").trigger("reset");
+        $('#existingImages').remove();
         $.ajax({
             url: "/api/all-brands", // Endpoint to fetch all brands
             method: "GET",
@@ -106,11 +121,29 @@ $(document).ready(function () {
             url: "/api/all-suppliers", // Endpoint to fetch all suppliers
             method: "GET",
             success: function(response) {
-                var supplierSelect = $('#supplier_name');
-                supplierSelect.empty(); // Clear previous options
-                supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
+                var supplierContainer = $('#supplier_name');
+                supplierContainer.empty(); // Clear previous checkboxes
+
                 response.data.forEach(function(supplier) {
-                    supplierSelect.append(new Option(supplier.supplier_name, supplier.supplier_id));
+                    // Create a new div for each checkbox
+                    var checkboxDiv = $('<div class="form-check"></div>');
+
+                    // Create the checkbox input
+                    var checkbox = $('<input type="checkbox" class="form-check-input" />')
+                        .attr('id', 'supplier_' + supplier.supplier_id)
+                        .attr('name', 'supplier_name[]') // Use an array notation for multiple selections
+                        .val(supplier.supplier_id);
+
+                    // Create the label for the checkbox
+                    var label = $('<label class="form-check-label"></label>')
+                        .attr('for', 'supplier_' + supplier.supplier_id)
+                        .text(supplier.supplier_name);
+
+                    // Append the checkbox and label to the div
+                    checkboxDiv.append(checkbox).append(label);
+
+                    // Append the div to the container
+                    supplierContainer.append(checkboxDiv);
                 });
             },
             error: function(xhr) {
@@ -122,6 +155,7 @@ $(document).ready(function () {
     $('#ptable').on('click', 'a.editBtn', function (e) {
         e.preventDefault();
         console.log('Edit button clicked');
+        $("#nameError, #brandError, #descError, #sellError, #costError, #stockError, #supplierError, #imagesError").hide();
     
         // Clear previous data and reset the form
         $('#productId').remove();
@@ -149,8 +183,7 @@ $(document).ready(function () {
                 console.log('Data received:', data);
     
                 var brandSelect = $('#brand_name');
-                brandSelect.empty(); // Clear previous options
-                brandSelect.append('<option value="">Select a brand</option>'); // Default option
+                brandSelect.empty().append('<option value="">Select a brand</option>'); // Default option
                 if (data.brands) {
                     data.brands.forEach(function (brand) {
                         var option = new Option(brand.name, brand.brand_id);
@@ -161,16 +194,32 @@ $(document).ready(function () {
                     });
                 }
     
-                var supplierSelect = $('#supplier_name');
-                supplierSelect.empty(); // Clear previous options
-                supplierSelect.append('<option value="">Select a supplier</option>'); // Default option
-                data.suppliers.forEach(function (supplier) {
-                    var option = new Option(supplier.supplier_name, supplier.supplier_id);
-                    if (supplier.supplier_id == data.product.supplier_id) {
-                        option.selected = true; // Set the selected option
-                    }
-                    supplierSelect.append(option);
-                });
+                var supplierContainer = $('#supplier_name');
+                supplierContainer.empty(); // Clear previous checkboxes
+    
+                if (data.suppliers) {
+                    data.suppliers.forEach(function (supplier) {
+                        var checkbox = $('<div class="form-check"></div>');
+                        var input = $('<input>', {
+                            type: 'checkbox',
+                            class: 'form-check-input',
+                            id: 'supplier_' + supplier.supplier_id,
+                            name: 'suppliers[]',
+                            value: supplier.supplier_id
+                        });
+                        var label = $('<label>', {
+                            class: 'form-check-label',
+                            for: 'supplier_' + supplier.supplier_id
+                        }).text(supplier.supplier_name);
+    
+                        if (data.product_supplier_ids && data.product_supplier_ids.includes(supplier.supplier_id)) {
+                            input.prop('checked', true); // Set the checkbox as checked if it matches any supplier_id
+                        }
+    
+                        checkbox.append(input).append(label);
+                        supplierContainer.append(checkbox);
+                    });
+                }
     
                 $('#product_name').val(data.product.product_name);
                 $('#brand_name').val(data.product.brand_id);
@@ -179,8 +228,8 @@ $(document).ready(function () {
                 $('#cost_price').val(data.product.cost_price);
     
                 // Handle stock quantity
-                if (data.product.stock) {
-                    $('#quantity').val(data.product.stock.quantity);
+                if (data.product.stock && data.product.stock.length > 0) {
+                    $('#quantity').val(data.product.stock[0].quantity || ''); // Assuming stock is an array
                 } else {
                     $('#quantity').val('');
                 }
@@ -203,6 +252,7 @@ $(document).ready(function () {
 
     $("#productSubmit").on('click', function (e) {
         e.preventDefault();
+        $("#nameError, #brandError, #descError, #sellError, #costError, #stockError, #supplierError, #imagesError").hide();
         if (validateForm()){
             var data = $('#pform')[0];
             let formData = new FormData(data);
@@ -215,15 +265,19 @@ $(document).ready(function () {
                 processData: false,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 dataType: "json",
-                success: function (data) {
-                    console.log(data.message);
-                if (data.status === 200) {
-                    $("#productModal").modal("hide");
-                    location.reload();
-                } else {
-                    console.error("Error: Invalid response status:", data.status);
-                }
+                success: function (response) {
+                    console.log(response.success);
+                    $("#productModal").hide();
+                    $(".modal-backdrop").remove(); 
+                    var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                    response.success +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
     
+                    $('#productAlertContainer').html(alertHtml);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
                 },
                 error: function (error) {
                     console.error("Error in AJAX request:", error);
@@ -235,7 +289,9 @@ $(document).ready(function () {
 
     $("#productUpdate").on('click', function (e) {
         e.preventDefault();
-        var id = $('#productId').val();
+        $("#nameError, #brandError, #descError, #sellError, #costError, #stockError, #supplierError, #imagesError").hide();
+        if (validateForm()){
+            var id = $('#productId').val();
         console.log(id);
         var table = $('#ptable').DataTable();
         // var cRow = $("tr td:eq(" + id + ")").closest('tr');
@@ -256,17 +312,26 @@ $(document).ready(function () {
             processData: false,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
-            success: function (data) {
-                console.log(data);
-                $('#itemModal').modal("hide");
+            success: function (response) {
+                console.log(response.success);
+                $("#productModal").hide();
+                $(".modal-backdrop").remove(); 
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+                var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                response.success +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>';
 
-                table.ajax.reload()
+                $('#productAlertContainer').html(alertHtml);
 
             },
             error: function (error) {
                 console.log(error);
             }
         });
+        }
     });
 
     $('#ptable').on('click', 'a.deletebtn', function (e) {
@@ -339,8 +404,8 @@ $(document).ready(function () {
         }
 
         const sellPrice = $("#sell_price").val();
-        const sellPriceNum = parseFloat(sellPrice);
-        if (isNaN(sellPriceNum) || sellPriceNum <= 1) {
+        const sellPriceNum =  /^\d+$/.test(sellPrice);
+        if (!sellPriceNum || parseInt(sellPrice) <= 1) {
             $("#sellError").text("Sell price must be an integer greater than 1.").show();
             isValid = false;
         } else {
@@ -348,8 +413,9 @@ $(document).ready(function () {
         }
 
         const costPrice = $("#cost_price").val();
-        const costPriceNum = parseFloat(costPrice);
-        if (isNaN(costPriceNum) || costPriceNum <= 1) {
+        const isValidInteger = /^\d+$/.test(costPrice); // Regex to check for integer
+
+        if (!isValidInteger || parseInt(costPrice) <= 1) {
             $("#costError").text("Cost price must be an integer greater than 1.").show();
             isValid = false;
         } else {
@@ -365,14 +431,19 @@ $(document).ready(function () {
             $("#stockError").hide();
         }
 
-        const supplier = $("#supplier_name").val();
-        if (!supplier) {
-            $("#supplierError").text("Please select a supplier.").show();
+        const checkboxes = $("#supplier_name input[type='checkbox']");
+
+        // Check if at least one checkbox is checked
+        const isAnyChecked = checkboxes.is(':checked');
+
+        if (!isAnyChecked) {
+            $("#supplierError").text("Please select at least one supplier.").show();
             isValid = false;
         } else {
             $("#supplierError").hide();
+            isValid = true;
         }
-    
+
         const files = $("#images").prop('files');
 
         if (files.length > 0) {

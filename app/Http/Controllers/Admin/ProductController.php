@@ -29,6 +29,11 @@ class ProductController extends Controller
             ->skip(($page - 1) * 10)
             ->take(10)
             ->get();
+
+        $products->map(function ($product) {
+            $product->stock_quantity = $product->stock->first() ? $product->stock->first()->quantity : null;
+            return $product;
+        });
     
         $end = $products->count() < 10;
     
@@ -37,6 +42,7 @@ class ProductController extends Controller
             'end' => $end,
         ]);
     }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -73,16 +79,17 @@ class ProductController extends Controller
         $stock->quantity = $request->quantity;
         $stock->save();
 
-        $stockline = new Stockline();
-        $stockline->stock_id = $stock->stock_id;
-        $stockline->supplier_id = $request->supplier_name;
-        $stockline->save();     
+        $selectedSuppliers = $request->input('supplier_name', []); // Default to an empty array if no checkboxes are checked
 
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product,
-            'status' => 200
-        ]);
+    // Process the selected suppliers
+        foreach ($selectedSuppliers as $supplierId) {
+            $stockline = new Stockline();
+            $stockline->stock_id = $stock->stock_id;
+            $stockline->supplier_id = $supplierId;
+            $stockline->save();     
+        }
+
+        return response()->json(['success' => 'Product created successfully']);
     }
 
     public function show(string $id)
@@ -91,10 +98,17 @@ class ProductController extends Controller
         if ($product) {
             $brands = Brand::all();
             $suppliers = Supplier::all();
+
+            // Ensure stock is a collection and extract supplier IDs, handle products without stocks
+           $supplierIds = $product->stock->map(function ($stock) {
+            return $stock->suppliers->pluck('supplier_id');
+            })->flatten()->unique();
+
             return response()->json([
                 'product' => $product,
-                'brands' => $brands,  // Fixed to include all brands
-                'suppliers' => $suppliers,  // Fixed to include all suppliers
+                'brands' => $brands,
+                'suppliers' => $suppliers,
+                'product_supplier_ids' => $supplierIds,
                 'images' => $product->images->map(function ($image) {
                     return [
                         'image_path' => asset('storage/images/' . basename($image->image_path))
@@ -108,17 +122,22 @@ class ProductController extends Controller
         }
     }
 
+    
     public function update(Request $request, Product $product)
     {
         $validatedData = $request->validate([
-           'product_name' => 'required',
+            'product_name' => 'required',
             'brand_name' => 'required',
             'description' => 'required',
             'sell_price' => 'required|numeric',
             'cost_price' => 'required|numeric',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'suppliers' => 'array', // Ensure it's an array
+            'suppliers.*' => 'exists:suppliers,supplier_id', // Validate each supplier ID
+            'quantity' => 'required|numeric' // Ensure quantity is validated
         ]);
-
+    
+        // Update or create the product
         $product = Product::updateOrCreate(
             ['product_id' => $request->product_id],
             [
@@ -129,6 +148,19 @@ class ProductController extends Controller
                 'cost_price' => $request->cost_price
             ]
         );
+    
+        // Fetch the stock associated with the product
+        $stock = $product->stock->first(); // Assumes that the product has only one stock record
+    
+        if ($stock) {
+            // Update existing stock record
+            $stock->update([
+                'quantity' => $request->quantity,
+            ]);
+        }
+
+        $selectedSupplierIds = $request->input('suppliers', []);
+        $stock->suppliers()->sync($selectedSupplierIds);
 
         if ($request->hasFile('images')) {
             $existingImages = Image::where('product_id', $product->product_id)->get();
@@ -151,7 +183,7 @@ class ProductController extends Controller
 
     
         // Redirect back with success message
-        return response()->json(["success" => "product updated successfully.", "product" => $product, "status" => 200]);
+        return response()->json(['success' => 'Product created successfully']);
     }
 
     public function destroy(Product $product)

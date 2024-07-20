@@ -3,7 +3,7 @@
 
 @section('content')
 <div id="products" class="container">
-    <!-- Button to trigger modal -->
+    <div id="productAlertContainer"></div>
     <button type="button" id="productAdd" class="btn btn-info btn-lg" data-toggle="modal" data-target="#productModal">
         Add <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
     </button>
@@ -55,14 +55,14 @@
                     <div class="form-group">
                         <label for="product_name" class="control-label">Product Name</label>
                         <input type="text" class="form-control" id="product_name" name="product_name">
-                        <small id="nameError" class="form-text text-danger" style="display:none;">Please enter a prouct name (at least 3 characters long).</small>
+                        <small id="nameError" class="form-text text-danger" style="display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label for="brand_name" class="control-label">Brand Name</label>
                         <select class="form-control" id="brand_name" name="brand_name">
                             <!-- Options will be populated dynamically -->
                         </select>
-                        <small id="brandError" class="form-text text-danger" style="display:none;">Please select a brand.</small>
+                        <small id="brandError" class="form-text text-danger" style="display:none;"></small>
                     </div>
                     <div class="form-group">
                         <label for="description" class="control-label">Description</label>
@@ -85,12 +85,12 @@
                         <small id="stockError" class="form-text text-danger" style="display:none;"></small>
                     </div>
                     <div class="form-group">
-                        <label for="brand_name" class="control-label">Supplier</label>
-                        <select class="form-control" id="supplier_name" name="supplier_name">
-                            <!-- Options will be populated dynamically -->
-                        </select>
+                        <label for="supplier_name" class="control-label">Suppliers</label>
+                        <div id="supplier_name" class="form-check-group">
+                            <!-- Checkboxes will be populated dynamically -->
+                        </div>
                         <small id="supplierError" class="form-text text-danger" style="display:none;"></small>
-                    </div>
+                    </div>                   
                     <div class="form-group">
                         <label for="images">Images:</label>
                         <input type="file" class="form-control" id="images" name="images[]" multiple>

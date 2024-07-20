@@ -26,7 +26,7 @@ class Product extends Model
 
     public function stock()
     {
-        return $this->hasOne(Stock::class, 'product_id');
+        return $this->hasMany(Stock::class, 'product_id');
     }
 
     public function brand()
