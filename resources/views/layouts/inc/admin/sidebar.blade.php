@@ -1,5 +1,6 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
+        
         <!--Dashboard-->
         <li class="nav-item">
             <a class="nav-link" href="{{ url('admin/dashboard/') }}">
@@ -7,9 +8,10 @@
                 <span class="menu-title">Dashboard</span>
             </a>
         </li>
+
         <!--chart-->
         <li class="nav-item">
-            <a class="nav-link" href="pages/charts/chartjs.html">
+            <a class="nav-link" href="/charts">
                 <i class="mdi mdi-chart-pie menu-icon"></i>
                 <span class="menu-title">Charts</span>
             </a>
@@ -30,7 +32,6 @@
             </div> --}}
         </li>
         <!--Brand-->
-
 
         <li class="nav-item">
             <a class="nav-link" href="/brands">

@@ -65,12 +65,12 @@ Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::prefix('/products')->group(function () {
     Route::view('','admin.products.index');
 })->middleware(['auth', 'signed']);
-Route::post('product/import', [ProductController::class, 'productsImport']);
-Route::get('product/import', [ProductController::class, 'index']);
 
 Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.suppliers.index');
 });
+
+Route::view('charts', 'admin.chart');
 
 Route::prefix('/carts')->group(function () {
     Route::GET('', [CartController::class, 'index'])->name('cart');
@@ -79,9 +79,6 @@ Route::prefix('/carts')->group(function () {
     route::patch('update-cart', [CartController::class, 'update'])->name('update_cart');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
 })->middleware(['auth', 'signed']);
-
-Route::post('supplier/import', [App\Http\Controllers\SupplierController::class,'suppliersImport']);
-Route::get('supplier/import', [App\Http\Controllers\SupplierController::class,'index']);
 
 Route::prefix('/mail')->group(function () {
     Route::GET('/send', [MailController::class, 'sendMail'])->name('sendMail');
@@ -95,9 +92,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 
 //==========================================================================================
-
-
-
 //==========================================================================================
 Route::prefix('/users')->group(function () {
     Route::view('', 'admin.users.index');
