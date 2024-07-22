@@ -59,6 +59,9 @@ Route::prefix('/brands')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::post('brand/import', [App\Http\Controllers\BrandController::class,'brandsImport']);
 Route::get('brand/import', [App\Http\Controllers\BrandController::class,'index']);
 
+Route::post('product/import', [ProductController::class, 'productsImport']);
+Route::get('product/import', [ProductController::class, 'index']);
+
 Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.stocks.index');
 });
