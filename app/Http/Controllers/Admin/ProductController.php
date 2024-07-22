@@ -43,6 +43,13 @@ class ProductController extends Controller
         ]);
     }
 
+    public function viewProduct($id)
+    {
+        $product = Product::findOrFail($id);
+
+        return view('prodinfo', compact('product'));
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

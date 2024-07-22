@@ -99,8 +99,10 @@ $(document).ready(function () {
         $("#supplierError").hide();
         $("#imagesError").hide();
         $('#productId').remove();
-        $("#pform").trigger("reset");
         $('#existingImages').remove();
+        $("#productSubmit").show();
+        $("#productUpdate").hide();
+        $("#pform").trigger("reset");
         $.ajax({
             url: "/api/all-brands", // Endpoint to fetch all brands
             method: "GET",

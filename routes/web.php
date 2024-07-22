@@ -39,6 +39,7 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 Route::view('/home','home')->name('home');
 Route::get('/home/search', [SearchController::class, 'index'])->name('search');
+Route::get('/products/info/{id}', [ProductController::class, 'viewproduct'])->name('prodinfo');
 //==========================================================================================
 
 
@@ -79,6 +80,8 @@ Route::prefix('/carts')->group(function () {
     route::patch('update-cart', [CartController::class, 'update'])->name('update_cart');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
 })->middleware(['auth', 'signed']);
+
+// Route::get('/search', [SearchController::class, 'index']);
 
 Route::prefix('/mail')->group(function () {
     Route::GET('/send', [MailController::class, 'sendMail'])->name('sendMail');

@@ -22,13 +22,24 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['images', 'stock.suppliers'])
-        ->whereHas('stock', function ($query) {
-            $query->where('quantity', '>', 1);
-        })
-        ->get();
+        $productName = $request->input('product_name');
+        
+        if ($productName) {
+            // Perform the search with Algolia
+            $products = Product::search($productName)->get();
+            return response()->json(['data' => $products]);
+        } else {
+            // Retrieve products with stock quantity greater than 1
+            $products = Product::with(['images', 'stock.suppliers'])
+                ->whereHas('stock', function ($query) {
+                    $query->where('quantity', '>', 1);
+                })
+                ->get();
+        }
+        
         return response()->json($products);
     }
+    
 }

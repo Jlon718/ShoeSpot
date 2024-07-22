@@ -13,8 +13,19 @@ class SearchController extends Controller
     public function index(Request $request)
     {
         $productName = $request->input('product_name');
-        $products = Product::where('product_name', 'like', "%$productName%")->get();
-        return view('home', compact('products'));
+
+        if ($productName) {
+            // Perform the search with Algolia
+            $products = Product::search($productName)->get();
+        } else {
+            // Retrieve all products if no search term is provided
+            $products = Product::all();
+        }
+
+        // Limit the number of results for autocomplete
+        $products = $products->take(10);
+
+        return response()->json(['data' => $products]);
     }
 
 

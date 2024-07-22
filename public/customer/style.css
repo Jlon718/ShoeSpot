@@ -443,6 +443,27 @@ h3.cart-title {
 }
 
 
+#autocomplete-results {
+    list-style: none;
+    padding: 0;
+}
+
+#autocomplete-results li {
+    margin: 0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+#autocomplete-results li a {
+    text-decoration: none;
+    color: #000;
+}
+
+#autocomplete-results li a:hover {
+    color: #007bff;
+}
+
+
 /** Search Form
 --------------------------------------------------------------*/
 .search-form input[type="search"].search-field {

@@ -31,6 +31,7 @@
 
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -38,6 +39,7 @@
     <!-- Custom JS -->
     <script src="{{ asset('admin/js/home.js') }}"></script>
     <script src="{{ asset('admin/js/cart.js') }}"></script>
+    <script src="{{ asset('admin/js/search.js') }}"></script>
 
     <!-- Modernizr JS -->
     <script src="js/modernizr.js"></script>
@@ -135,44 +137,18 @@
         </symbol>
     </svg>
 
-    <!-- search bar -->
-    <div class="search-popup">
+    <!-- search bar -->    
+    <div id="search-popup" class="search-popup">
         <div class="search-popup-container">
-
-            <form role="search" method="get" class="search-form" action="{{route('search')}}">
-                <input type="search" id="search-form" class="search-field" placeholder="Type and press enter"
-                    value="" name="product_name" />
-                <button type="submit" class="search-submit"><svg class="search">
+            <form role="search" method="get" id="search-form" class="search-form" action="#">
+                <input type="search" class="search-field" placeholder="Type and press enter" value="" name="product_name" />
+                <ul id="autocomplete-results"></ul>
+                <button type="submit" class="search-submit">
+                    <svg class="search">
                         <use xlink:href="#search"></use>
-                    </svg></button>
+                    </svg>
+                </button>
             </form>
-
-            <h5 class="cat-list-title">Browse Categories</h5>
-
-            <ul class="cat-list">
-                <li class="cat-list-item">
-                    <a href="#" title="Mobile Phones">Mobile Phones</a>
-                </li>
-                {{-- <li class="cat-list-item">
-                    <a href="#" title="Smart Watches">Smart Watches</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Headphones">Headphones</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Accessories">Accessories</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Monitors">Monitors</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Speakers">Speakers</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Memory Cards">Memory Cards</a>
-                </li> --}}
-            </ul>
-
         </div>
     </div>
     <!--Navbar  -->
@@ -255,13 +231,18 @@
                             <li class="nav-item">
                                 <div class="user-items ps-5">
                                     <ul class="d-flex justify-content-end list-unstyled">
-                                        <li class="search-item pe-3">
-                                            <a href="#" class="search-button">
-                                                <svg class="search">
-                                                    <use xlink:href="#search"></use>
-                                                </svg>
-                                            </a>
-                                        </li>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <li class="search-item pe-3">
+                                                    <a class="search-button">
+                                                        <svg class="search">
+                                                            <use xlink:href="#search"></use>
+                                                        </svg>
+                                                    </a>
+                                                </li>
+                                            </div>
+                                        </div>
+                                        
 
                                         {{-- Customer profile and logout button --}}
                                         <li class="dropdown pe-3">

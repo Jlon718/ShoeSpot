@@ -6,8 +6,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BrandController;
-use App\Http\Controllers\StockController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\IndivProductController;
@@ -39,7 +40,13 @@ Route::apiResource('product', ProductController::class);
 Route::apiResource('supplier', SupplierController::class);
 Route::apiResource('user', UserController::class);
 
+Route::get('/all-brands', [BrandController::class, 'getAll']);
+Route::get('/all-suppliers', [SupplierController::class, 'getAll']);
+
+Route::get('/products/{id}', [ProductController::class, 'viewProduct'])->name('api.prodinfo');
+
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');
+// Route::get('/search', [SearchController::class, 'index']);
 
 Route::get('title-chart',[ChartController::class, 'titleChart']);
 Route::get('/sales-chart',[ChartController::class, 'salesChart' ]);
