@@ -18,13 +18,33 @@ $(document).ready(function () {
                         var item = `<div class="product">
                             <img src="customer/images/product-item1.jpg" alt="iPhone">
                             <div class="product-overlay">
-                                <button class="view-product">View Product</button>
-                                <button class="add-to-cart">Add to Cart</button>
+                                <div class='cart-concern'>
+                                    <div class='cart-button'>
+                                        <a href='/products/info/${value.product_id}' class='btn btn-medium btn-black'>
+                                            View Product
+                                            <svg class='cart-outline'>
+                                                <use xlink:href='#cart-outline'></use>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <div class='cart-button'>
+                                        <form id="productform_${value.product_id}" action="#" method="#">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" id="product_id" name="product_id" value="${value.product_id}">
+                                            <button id="addCart" type="submit" class="btn btn-medium btn-black">
+                                                Add to Cart
+                                                <svg class="cart-outline">
+                                                    <use xlink:href="#cart-outline"></use>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                             <div class="details">
                                 <span class="name">${value.product_name}</span>
                                 <span class="price">₱${value.sell_price}</span>
-                                <span class="brand">${value.brand_name}</span>
+                                <span class="brand">${value.brand_id}</span>
                             </div>
                         </div>`;
                         $("#mobile-productss").append(item);

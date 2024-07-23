@@ -783,7 +783,8 @@ h3.cart-title {
 
 .product img {
     width: 100%;
-    height: auto;
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure the image fits within its container without cropping */
 }
 
 .product-overlay {
@@ -798,24 +799,48 @@ h3.cart-title {
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    background: rgba(0, 0, 0, 0.5); /* Add background overlay */
 }
 
 .product:hover .product-overlay {
     opacity: 1;
 }
 
-.product-overlay button {
+.cart-concern {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.cart-button {
+    margin: 10px 0; /* Adjust margin to create space between buttons */
+    width: 100%; /* Adjust the width to prevent large buttons */
+}
+
+.btn {
     background: #000;
     color: #fff;
     border: none;
-    padding: 10px 20px;
-    margin: 5px 0;
+    padding: 10px; /* Adjust padding for a better look */
     cursor: pointer;
     transition: background 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 14px; /* Adjust font size */
 }
 
-.product-overlay button:hover {
+.btn:hover {
     background: #444;
+}
+
+.cart-outline {
+    width: 20px; /* Adjust icon size */
+    height: 20px; /* Adjust icon size */
+    margin-left: 5px; /* Reduce margin */
 }
 
 .details {
@@ -828,6 +853,7 @@ h3.cart-title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 12px; /* Reduce font size for smaller details text */
 }
 
 /* Responsive Design */
@@ -865,10 +891,6 @@ h3.cart-title {
         max-width: 100%;
     }
 }
-
-
-
-
 
 
 /* 2. Billboard
