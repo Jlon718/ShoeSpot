@@ -12,7 +12,24 @@ $(document).ready(function () {
                 console.log("Response data:", response);
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function (value) {
-                        var item = `<div class="product-grid">
+                        var item = ` <div class="product">
+                                        <img src="customer/images/product-item1.jpg" alt="iPhone">
+                                        <div class="product-overlay">
+                                            <button class="view-product">View Product</button>
+                                            <button class="add-to-cart">Add to Cart</button>
+                                        </div>
+                                        <div class="details">
+                                            <span class="name">LIPSTICK</span>
+                                            <span class="price">₱2000</span>
+                                            <span class="brand">GULONG</span>
+                                        </div>
+                                    </div>'
+                        
+                        
+                        
+                        
+                        
+                        <div class="product-grid">
                                         <div class="product">
                                             <div class='image-holder'>
                                                 <img src='customer/images/product-item1.jpg' alt='product-item' class='img-fluid'>
@@ -49,7 +66,7 @@ $(document).ready(function () {
                                             </div>
                                         </div>
                                     </div>`;
-                        $("#mobile-product").append(item);
+                        $("#mobile-products").append(item);
                     });
                 } else {
                     $(window).off('scroll');
