@@ -23,6 +23,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('customer/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('customer/product.css') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

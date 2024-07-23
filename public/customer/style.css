@@ -76,13 +76,13 @@ html {
     box-sizing: border-box;
 }
 
-body {
+/* body {
     font-family: var(--body-font);
     font-size: 14px;
     font-weight: 500;
     line-height: 1.6;
     margin: 0;
-}
+} */
 
 p {
     font-size: 1.2em;
@@ -687,6 +687,22 @@ h3.cart-title {
 
 /* 1. Header
 /*----------------------------------------------*/
+/* Adjust the top margin of the body to account for the fixed header */
+/* body {
+    margin-top: 100px; 
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f5f5f5;
+} */
+
+#mobile-products {
+    padding-top: 100px; /* Adjust this value to match the height of your header */
+}
+
 .site-header {
     position: fixed;
     width: 100%;
@@ -694,6 +710,7 @@ h3.cart-title {
     transition: background 0.3s ease-out;
 }
 
+/* Rest of your CSS */
 .navbar-toggler svg.navbar-icon {
     width: 50px;
     height: 50px;
@@ -743,6 +760,47 @@ h3.cart-title {
     #navbar .user-items {
         display: none;
     }
+}
+
+.product-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.product {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product img {
+    width: 100%;
+    height: auto;
+}
+
+.details {
+    margin-top: 10px;
+}
+
+.name {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.price {
+    color: #00aaff;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.brand {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
 }
 
 

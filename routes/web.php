@@ -2,22 +2,23 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\VerificationController;
-use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\customer\customerprof;
-use App\Http\Controllers\customer\ShopController;
-use App\Http\Controllers\IndivProductController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\customer\customerprof;
+use App\Http\Controllers\IndivProductController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\customer\ShopController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\VerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,14 +57,14 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::prefix('/brands')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.brands.index');
 });
-Route::post('brand/import', [App\Http\Controllers\BrandController::class,'brandsImport']);
-Route::get('brand/import', [App\Http\Controllers\BrandController::class,'index']);
+Route::post('brand/import', [BrandController::class,'brandsImport']);
+Route::get('brand/import', [BrandController::class,'index']);
 
 Route::post('product/import', [ProductController::class, 'productsImport']);
 Route::get('product/import', [ProductController::class, 'index']);
 
-Route::post('supplier/import', [App\Http\Controllers\SupplierController::class,'suppliersImport']);
-Route::get('supplier/import', [App\Http\Controllers\SupplierController::class,'index']);
+Route::post('supplier/import', [SupplierController::class,'suppliersImport']);
+Route::get('supplier/import', [SupplierController::class,'index']);
 
 Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.stocks.index');
@@ -77,7 +78,9 @@ Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () 
     Route::view('','admin.suppliers.index');
 });
 
-Route::view('charts', 'admin.chart');
+Route::view('/chart1', 'admin.chart1');
+Route::view('/chart2', 'admin.chart2');
+Route::view('/chart3', 'admin.chart3');
 
 Route::prefix('/carts')->group(function () {
     Route::GET('', [CartController::class, 'index'])->name('cart');

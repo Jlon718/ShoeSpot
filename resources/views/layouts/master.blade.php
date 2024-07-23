@@ -45,7 +45,9 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js" integrity="sha512-L0Shl7nXXzIlBSUUPpxrokqq4ojqgZFQczTYlGjzONGTDAcLremjwaWv5A+EDLnxhQzY5xUZPWLOLqYRkY0Cbw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {{-- <script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script> --}}
-    <script src="{{ asset('/admin/js/chart.js') }}"></script>
+    <script src="{{ asset('/admin/js/chart1.js') }}"></script>
+    <script src="{{ asset('/admin/js/chart2.js') }}"></script>
+    <script src="{{ asset('/admin/js/chart3.js') }}"></script>
     {{-- <link rel="stylesheet" href="{{ url('/css/app.css') }}"> --}}
     @yield('styles')
 </head>

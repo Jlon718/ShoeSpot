@@ -25,10 +25,12 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $productName = $request->input('product_name');
-        
+        $perPage = 10; // Number of items per page
+        $page = $request->input('page', 1); // Default to page 1
+    
         if ($productName) {
             // Perform the search with Algolia
-            $products = Product::search($productName)->get();
+            $products = Product::search($productName)->paginate($perPage, ['*'], 'page', $page);
             return response()->json(['data' => $products]);
         } else {
             // Retrieve products with stock quantity greater than 1
@@ -36,10 +38,9 @@ class HomeController extends Controller
                 ->whereHas('stock', function ($query) {
                     $query->where('quantity', '>', 1);
                 })
-                ->get();
+                ->paginate($perPage, ['*'], 'page', $page);
         }
-        
+    
         return response()->json($products);
     }
-    
 }

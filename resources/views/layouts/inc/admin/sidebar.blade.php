@@ -11,9 +11,23 @@
 
         <!--chart-->
         <li class="nav-item">
-            <a class="nav-link" href="/charts">
+            <a class="nav-link" href="/chart1">
                 <i class="mdi mdi-chart-pie menu-icon"></i>
-                <span class="menu-title">Charts</span>
+                <span class="menu-title">Customer Chart</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/chart2">
+                <i class="mdi mdi-chart-pie menu-icon"></i>
+                <span class="menu-title">Monthly Sales Chart</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/chart3">
+                <i class="mdi mdi-chart-pie menu-icon"></i>
+                <span class="menu-title">Product Charts</span>
             </a>
         </li>
 

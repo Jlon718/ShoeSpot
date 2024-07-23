@@ -48,6 +48,6 @@ Route::get('/products/{id}', [ProductController::class, 'viewProduct'])->name('a
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');
 // Route::get('/search', [SearchController::class, 'index']);
 
-Route::get('title-chart',[ChartController::class, 'titleChart']);
+Route::get('/title-chart',[ChartController::class, 'titleChart']);
 Route::get('/sales-chart',[ChartController::class, 'salesChart' ]);
 Route::get('/items-chart',[ChartController::class, 'itemsChart']);
