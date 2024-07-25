@@ -4,37 +4,6 @@
         <div class="product-grid" id="mobile-productss">
             
         </div>
-
-        {{-- <div class="container">
-            <div class="row">
-                <div class="display-header d-flex justify-content-between pb-3">
-                    <h2 class="display-7 text-dark text-uppercase">Products</h2>
-                    <div class="btn-right">
-                        <a href="customer/shop" class="btn btn-medium btn-normal text-uppercase">Go to Shop</a>
-                    </div>
-                </div>
-                <div class="swiper product-swiper">
-                    <div class="swiper-wrapper" id="products">
-                        <!-- Dynamic products will be appended here -->
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-        {{-- <div class="container">
-            <div class="image-container">
-                <img src='customer/images/product-item1.jpg' alt="Product" class="product-image">
-                <div class="hover-overlay">
-                    <button class="hover-button">VIEW PRODUCT <span class="cart-icon">🛒</span></button>
-                    <button class="hover-button">Add to Cart <span class="cart-icon">🛒</span></button>
-                </div>
-            </div>
-            <div class="text-container">
-                <span class="label">LIPSTICK</span>
-                <span class="price">₱2000</span>
-            </div>
-        </div> --}}
-        {{-- <div class="swiper-pagination position-absolute text-center"></div> --}}
     </section> 
 
     @if(session('success'))

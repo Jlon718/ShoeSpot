@@ -217,6 +217,12 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#brandClose").on('click', function (e) {
+        $("#itemModal").hide();
+        $(".modal-backdrop").remove(); 
+              
+    });
     
 
     function validateForm() {

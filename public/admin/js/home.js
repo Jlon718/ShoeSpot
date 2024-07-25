@@ -1,22 +1,24 @@
 $(document).ready(function () { 
-    let page = 1;
+    let currentPage = 1;
     let loading = false;
+    let endOfData = false;
 
-    function loadProducts(page) {
-        if (loading) return;
+    function loadMoreProducts() {
+        if (loading || endOfData) return;
         loading = true;
 
         $.ajax({
             type: "GET",
             url: "/api/homepage",
-            data: { page: page },
+            data: { page: currentPage },
             dataType: 'json',
             success: function(response) {
-                console.log("Response data:", response);
+                console.log("Response data:", response); // Debugging statement
                 if (response.data && response.data.length > 0) {
                     response.data.forEach(function(value) {
+                        var imageUrl = value.images.length > 0 ? value.images[0].image_path : 'customer/images/default.jpg';
                         var item = `<div class="product">
-                            <img src="customer/images/product-item1.jpg" alt="iPhone">
+                            <img src="${imageUrl}" alt="${value.product_name}">
                             <div class="product-overlay">
                                 <div class='cart-concern'>
                                     <div class='cart-button'>
@@ -49,6 +51,14 @@ $(document).ready(function () {
                         </div>`;
                         $("#mobile-productss").append(item);
                     });
+
+                    if (response.current_page >= response.last_page) {
+                        endOfData = true;
+                    } else {
+                        currentPage++;
+                    }
+                } else {
+                    endOfData = true;
                 }
                 loading = false;
             },
@@ -59,13 +69,12 @@ $(document).ready(function () {
     }
 
     // Initial load
-    loadProducts(page);
+    loadMoreProducts();
 
     // Example: Load more products on scroll
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-            page++;
-            loadProducts(page);
+            loadMoreProducts();
         }
     });
 });

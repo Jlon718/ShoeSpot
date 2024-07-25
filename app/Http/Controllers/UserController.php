@@ -7,10 +7,19 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('customer')->get();
-        return response()->json($users);
+        $page = $request->get('page', 1);
+        $users = User::with('customer')
+        ->skip(($page - 1) * 10)
+        ->take(10)
+        ->get();
+        $end = $users->count() < 10;
+
+        return response()->json([
+            'data' => $users,
+            'end' => $end,
+        ]);
     }
 
     public function show(string $id)

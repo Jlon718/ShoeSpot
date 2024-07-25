@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -24,23 +25,31 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        $page = $request->get('page', 1);
         $productName = $request->input('product_name');
-        $perPage = 10; // Number of items per page
-        $page = $request->input('page', 1); // Default to page 1
     
         if ($productName) {
             // Perform the search with Algolia
-            $products = Product::search($productName)->paginate($perPage, ['*'], 'page', $page);
-            return response()->json(['data' => $products]);
+            $products = Product::search($productName)
+            ->skip(($page - 1) * 10)
+            ->take(10)
+            ->get();
         } else {
             // Retrieve products with stock quantity greater than 1
             $products = Product::with(['images', 'stock.suppliers'])
                 ->whereHas('stock', function ($query) {
                     $query->where('quantity', '>', 1);
                 })
-                ->paginate($perPage, ['*'], 'page', $page);
+                ->skip(($page - 1) * 10)
+            ->take(10)
+            ->get();
         }
     
-        return response()->json($products);
+        $end = $products->count() < 10;
+    
+        return response()->json([
+            'data' => $products,
+            'end' => $end,
+        ]);
     }
 }

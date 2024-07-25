@@ -32,3 +32,12 @@
 .form-check-input {
     margin-right: 10px; /* Adds space between the checkbox and the label */
 }
+
+
+#productAdd, #brandAdd, #supAdd{
+    margin-bottom: 20px; /* Adds 20px space below the button */
+}
+
+#productform, #brandForm, #supplierForm {
+    margin-bottom: 20px; /* Adds 20px space below the form */
+}

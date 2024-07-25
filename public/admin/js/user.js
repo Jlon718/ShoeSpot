@@ -1,24 +1,13 @@
 $(document).ready(function () {
-    $('#utable').DataTable({
+    let table = $('#utable').DataTable({
+        paging: false,
         ajax: {
-            url: "/api/user",
-            dataSrc: ""
-        },
-        dom: 'Bfrtip',
-        buttons: [
-            'pdf',
-            'excel',
-            {
-                text: 'Add user',
-                className: 'btn btn-primary',
-                action: function (e, dt, node, config) {
-                    $("#iform").trigger("reset");
-                    $('#itemModal').modal('show');
-                    $('#itemUpdate').hide();
-                    $('#itemImage').remove()
-                }
+            url: '/api/user',
+            data: function(d) {
+                // Add additional data if needed
+                return $.extend({}, d, { additionalParam: 'value' });
             }
-        ],
+        },
         columns: [
             { data: 'customer.customer_id' },
             { data: 'customer.customer_name' },
@@ -39,11 +28,45 @@ $(document).ready(function () {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return "<a href='#' class = 'editBtn' id='editbtn' data-id=" + data.id + "><i class='fas fa-edit' aria-hidden='true' style='font-size:24px' ></i></a><a href='#'  class='deletebtn' data-id=" + data.id + "><i  class='fas fa-trash-alt' style='font-size:24px; color:red' ></a></i>";
+                    return "<a href='#' class = 'editBtn' id='editbtn' data-id=" + data.id + "><i class='fas fa-edit' aria-hidden='true' style='font-size:24px' ></i></a>";
                 }
             }
         ],
-    }); // end datatable
+    });
+    
+    
+    let currentPage = 1;
+    let loading = false;
+    let endOfData = false;
+
+    function loadMoreData() {
+        if (loading || endOfData) return;
+
+        loading = true;
+        currentPage++;
+
+        $.ajax({
+            url: `/api/user?page=${currentPage}`,
+            method: 'GET',
+            success: function(json) {
+                if (json.data.length === 0) {
+                    endOfData = true;
+                } else {
+                    json.data.forEach(user => table.row.add(user).draw(false));
+                }
+                loading = false;
+            },
+            error: function() {
+                loading = false;
+            }
+        });
+    }
+
+    $(window).on('scroll', function() {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 50) {
+            loadMoreData();
+        }
+    });
 
 
     $('#utable').on('click', 'a.editBtn', function (e) {

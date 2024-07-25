@@ -45,7 +45,7 @@ class ProductController extends Controller
 
     public function viewProduct($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['images'])->findOrFail($id);
 
         return view('prodinfo', compact('product'));
     }
@@ -164,10 +164,37 @@ class ProductController extends Controller
             $stock->update([
                 'quantity' => $request->quantity,
             ]);
+        } else {
+            $stock = new Stock();
+            $stock->product_id = $request->product_id;
+            $stock->quantity = $request->quantity;
+            $stock->save();
         }
 
-        $selectedSupplierIds = $request->input('suppliers', []);
-        $stock->suppliers()->sync($selectedSupplierIds);
+        // Delete existing stocklines for the stock
+
+        $existingStocklines = Stockline::where('stock_id', $stock->stock_id)->exists();
+        if ($existingStocklines) {
+            Stockline::where('stock_id', $stock->stock_id)->delete();
+            $selectedSupplierIds = $request->input('suppliers', []);
+            // Add new stocklines
+            foreach ($selectedSupplierIds as $supplierId) {
+                Stockline::create([
+                    'stock_id' => $stock->stock_id,
+                    'supplier_id' => $supplierId
+                ]);
+            }
+        }else{
+            $selectedSupplierIds = $request->input('suppliers', []);
+            // Add new stocklines
+            foreach ($selectedSupplierIds as $supplierId) {
+                Stockline::create([
+                    'stock_id' => $stock->stock_id,
+                    'supplier_id' => $supplierId
+                ]);
+            }
+        }
+        
 
         if ($request->hasFile('images')) {
             $existingImages = Image::where('product_id', $product->product_id)->get();
@@ -190,7 +217,7 @@ class ProductController extends Controller
 
     
         // Redirect back with success message
-        return response()->json(['success' => 'Product created successfully']);
+        return response()->json(['success' => 'Product updated successfully']);
     }
 
     public function destroy(Product $product)

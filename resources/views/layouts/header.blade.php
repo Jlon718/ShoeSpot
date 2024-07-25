@@ -180,27 +180,53 @@
                     <div class="offcanvas-body">
                         <ul id="navbar"
                             class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
+
                             <li class="nav-item">
-                                <a class="nav-link me-4 active" href="#billboard">Home</a>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-primary" data-toggle="dropdown">
+                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>Cart<span class="badge badge-pill badge-danger">{{count((array) session('cart'))}}</span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <div class="row total-header-section">
+                                        @php $total = 0 @endphp
+                                        @foreach((array) session('cart') as $id=>$details)
+                                            @php $total += $details['sell_price'] * $details['quantity'] @endphp
+                                        @endforeach
+                                        <div class="col-lg-12 col-sm-12 total-section text-right">
+                                            <p>Total: <span class="text-info">P {{$total}}</span></p>
+                                        </div>
+                                    </div>
+                                    @if(session('cart'))
+                                        @foreach(session('cart') as $id=>$details)
+                                        <div class="row cart-detail">
+                                            <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                                                <img src="{{asset('image')}}/{{$details['image']}}">
+                                            </div>
+                                            <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                                                <p>{{$details['product_name']}}</p>
+                                                <span class="price text-info">P{{$details['sell_price']}}</span>
+                                                <span class="count">Quantity:{{$details['quantity']}}</span>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    @endif
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12 text-center checkout">
+                                            <a href="/carts" class="btn btn-primary btn btn-block">View all</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link me-4" href="#company-services">Services</a>
+                                <a class="nav-link me-4 active" href="{{asset('home')}}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link me-4" href="#mobile-products">Products</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link me-4" href="#smart-watches">Watches</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link me-4" href="#yearly-sale">Sale</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link me-4" href="#latest-blog">Blog</a>
+                                <a class="nav-link me-4" href="#company-services">Transactions</a>
                             </li>
 
                             <!-- Pages   -->
-                            <li class="nav-item dropdown">
+                            {{-- <li class="nav-item dropdown">
                                 <a class="nav-link me-4 dropdown-toggle link-dark" data-bs-toggle="dropdown"
                                     href="#" role="button" aria-expanded="false">Pages</a>
                                 <ul class="dropdown-menu">
@@ -213,9 +239,9 @@
                                     <li>
                                         <a href="customer/shop" class="dropdown-item">Shop</a>
                                     </li>
-                                    {{-- <li>
+                                    <li>
                                         <a href="cart.html" class="dropdown-item">Cart</a>
-                                    </li> --}}
+                                    </li>
                                     <li>
                                         <a href="checkout.html" class="dropdown-item">Checkout</a>
                                     </li>
@@ -229,7 +255,7 @@
                                         <a href="contact.html" class="dropdown-item">Contact</a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <div class="user-items ps-5">
                                     <ul class="d-flex justify-content-end list-unstyled">
@@ -266,15 +292,6 @@
                                                 </li>
                                             </ul>
                                         </li>
-
-
-                                        <li>
-                                            <a href="cart.html">
-                                                <svg class="cart">
-                                                    <use xlink:href="#cart"></use>
-                                                </svg>
-                                            </a>
-                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -287,7 +304,7 @@
         <div class="container">
             <div class="row">
                 <div class ="col-lg-12 col-sm-12 col-12">
-                    <div class="dropdown">
+                    {{-- <div class="dropdown">
                         <button type="button" class="btn btn-primary" data-toggle="dropdown">
                             <i class="fa fa-shopping-cart" aria-hidden="true"></i>Cart<span class="badge badge-pill badge-danger">{{count((array) session('cart'))}}</span>
                         </button>
@@ -321,7 +338,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

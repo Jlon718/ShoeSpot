@@ -4,18 +4,13 @@
 @section('content')
 <div id="products" class="container">
     <div id="productAlertContainer"></div>
-    <button type="button" id="productAdd" class="btn btn-info btn-lg" data-toggle="modal" data-target="#productModal">
-        Add <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    <button type="button" id="productAdd" class="btn btn-info btn-lg mb-3" data-toggle="modal" data-target="#productModal">
+        Add Product <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
     </button>
-
-    <!-- Search input field -->
-    <div class="card-body" style="height: 210px;">
-        <input type="text" id="itemSearch" placeholder="--search--">
-    </div>
     
-    <form action="{{ url('product/import') }}" method="POST" enctype="multipart/form-data">
+    <form id="productForm" action="{{ url('product/import') }}" method="POST" enctype="multipart/form-data" class="mb-3">
         @csrf
-        <input type="file" name="item_upload" class="form-control"/>
+        <input type="file" name="item_upload" class="form-control mb-3"/>
         <button type="submit" class="btn btn-primary">Import Excel File</button>
     </form>
 
@@ -102,7 +97,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="productClose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button id="productSubmit" type="submit" class="btn btn-primary">Save</button>
                 <button id="productUpdate" type="submit" class="btn btn-primary" style="display: none;">Update</button>
             </div>

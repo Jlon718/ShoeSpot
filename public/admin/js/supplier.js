@@ -86,7 +86,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
-                $('#alertContainer').empty();
+                $('#supplierAlertContainer').empty();
                 $("#supModal").hide();
                 $(".modal-backdrop").remove(); 
                 var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
@@ -94,7 +94,7 @@ $(document).ready(function () {
                                     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                                 '</div>';
 
-                $('#alertContainer').html(alertHtml);
+                $('#supplierAlertContainer').html(alertHtml);
                 setTimeout(function() {
                     location.reload();
                 }, 2000);
@@ -151,17 +151,17 @@ $(document).ready(function () {
                 processData: false,
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    $('#alertContainer').empty();
+                success: function (response) {
+                    console.log(response);
+                    $('#supplierAlertContainer').empty();
                     $("#supModal").hide();
                     $(".modal-backdrop").remove(); 
                     var alertHtml = '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                                        data.success +
+                                        response.success +
                                         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                                     '</div>';
     
-                    $('#alertContainer').html(alertHtml);
+                    $('#supplierAlertContainer').html(alertHtml);
                     setTimeout(function() {
                         location.reload();
                     }, 2000);

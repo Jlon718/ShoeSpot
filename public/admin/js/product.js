@@ -90,14 +90,7 @@ $(document).ready(function () {
 
 
     $('#productAdd').on('click', function(e) {
-        $("#nameError").hide();
-        $("#brandError").hide();
-        $("#descError").hide();
-        $("#sellError").hide();
-        $("#costError").hide();
-        $("#stockError").hide();
-        $("#supplierError").hide();
-        $("#imagesError").hide();
+        $("#nameError, #brandError, #descError, #sellError, #costError, #stockError, #supplierError, #imagesError").hide();
         $('#productId').remove();
         $('#existingImages').remove();
         $("#productSubmit").show();
@@ -129,21 +122,21 @@ $(document).ready(function () {
                 response.data.forEach(function(supplier) {
                     // Create a new div for each checkbox
                     var checkboxDiv = $('<div class="form-check"></div>');
-
+            
                     // Create the checkbox input
                     var checkbox = $('<input type="checkbox" class="form-check-input" />')
                         .attr('id', 'supplier_' + supplier.supplier_id)
-                        .attr('name', 'supplier_name[]') // Use an array notation for multiple selections
+                        .attr('name', 'suppliers[]') // Use an array notation for multiple selections
                         .val(supplier.supplier_id);
-
+            
                     // Create the label for the checkbox
                     var label = $('<label class="form-check-label"></label>')
                         .attr('for', 'supplier_' + supplier.supplier_id)
                         .text(supplier.supplier_name);
-
+            
                     // Append the checkbox and label to the div
                     checkboxDiv.append(checkbox).append(label);
-
+            
                     // Append the div to the container
                     supplierContainer.append(checkboxDiv);
                 });
@@ -325,7 +318,6 @@ $(document).ready(function () {
                 response.success +
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                 '</div>';
-
                 $('#productAlertContainer').html(alertHtml);
 
             },
@@ -334,6 +326,12 @@ $(document).ready(function () {
             }
         });
         }
+    });
+
+    $("#productClose").on('click', function (e) {
+        $("#productModal").hide();
+        $(".modal-backdrop").remove(); 
+              
     });
 
     $('#ptable').on('click', 'a.deletebtn', function (e) {

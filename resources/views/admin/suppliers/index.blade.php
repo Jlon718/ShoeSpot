@@ -2,12 +2,9 @@
 
 @section('content')
 <div id="suppliers" class="container">
-    <div id="alertContainer" class="alert-container"></div>
-    <button type="button" id="supAdd" class="btn btn-info btn-lg" data-toggle="modal" data-target="#supModal">Add <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-    <div class="card-body" style="height: 210px;">
-        <input type="text" id="supSearch" placeholder="--search--">
-    </div>
-    <form action="{{ url('supplier/import') }}" method="POST" enctype="multipart/form-data">
+    <div id="supplierAlertContainer"></div>
+    <button type="button" id="supAdd" class="btn btn-info btn-lg" data-toggle="modal" data-target="#supModal">Add supplier<span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+    <form id="supplierForm" action="{{ url('supplier/import') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="file" name="item_upload" class="form-control"/>
         <button type="submit" class="btn btn-primary">Import Excel File</button>
