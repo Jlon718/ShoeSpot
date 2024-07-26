@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('date_place');
             $table->date('date_shipped')->nullable();
             $table->float('shipping_fee');
-            $table->string('status')->default('processing');
+            $table->tinyInteger('status')->default(0)->comment('0=pending,1=shipped,2=delivered,3=cancelled');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -11,6 +11,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -40,6 +41,7 @@ Route::apiResource('product', ProductController::class);
 Route::apiResource('supplier', SupplierController::class);
 Route::apiResource('user', UserController::class);
 
+Route::apiResource('transactions', TransactionController::class);
 Route::get('/all-brands', [BrandController::class, 'getAll']);
 Route::get('/all-suppliers', [SupplierController::class, 'getAll']);
 

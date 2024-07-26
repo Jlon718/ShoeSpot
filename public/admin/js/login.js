@@ -19,11 +19,14 @@ $("#loginSubmit").on('click', function (e) {
             console.error('Error:', error);
             console.log('Status:', status);
             console.log('Response:', xhr.responseText);
+            
             // Display errors to the user
-            let errors = xhr.responseJSON.errors;
-            for (let field in errors) {
-                let errorMessages = errors[field];
-                alert(field + ": " + errorMessages.join(", "));
+            if (xhr.status === 401) {
+                alert('Invalid email or password. Please try again.');
+            } else if (xhr.status === 403) {
+                alert('Your account is deactivated. Please contact support.');
+            } else {
+                alert('An unexpected error occurred. Please try again later.');
             }
         }
     });

@@ -12,6 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\customer\customerprof;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\customer\ShopController;
@@ -40,6 +41,7 @@ Route::get('/', function () {
 Auth::routes(['verify' => true]);
 Route::view('/home','home')->name('home');
 Route::get('/home/search', [SearchController::class, 'index'])->name('search');
+Route::get('/home/searchIndex', [SearchController::class, 'searchIndex']);
 Route::get('/products/info/{id}', [ProductController::class, 'viewproduct'])->name('prodinfo');
 //==========================================================================================
 
@@ -72,15 +74,26 @@ Route::prefix('/stocks')->middleware(['auth', 'isAdmin'])->group(function () {
 
 Route::prefix('/products')->group(function () {
     Route::view('','admin.products.index');
-})->middleware(['auth', 'signed']);
+})->middleware(['auth', 'isAdmin']);
+
+Route::prefix('/transactions')->middleware(['auth', 'isAdmin'])->group(function () {
+    Route::view('','admin.transactions.index');
+});
 
 Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.suppliers.index');
 });
 
-Route::view('/chart1', 'admin.chart1');
-Route::view('/chart2', 'admin.chart2');
-Route::view('/chart3', 'admin.chart3');
+Route::prefix('/suppliers')->middleware(['auth', 'signed'])->group(function () {
+    Route::view('','customer.transactions');
+});
+
+
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::view('/chart1', 'admin.chart1');
+    Route::view('/chart2', 'admin.chart2');
+    Route::view('/chart3', 'admin.chart3');
+});
 
 Route::prefix('/carts')->group(function () {
     Route::GET('', [CartController::class, 'index'])->name('cart');

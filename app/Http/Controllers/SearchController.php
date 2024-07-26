@@ -32,9 +32,35 @@ class SearchController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function searchIndex(Request $request)
     {
-        //
+        $page = $request->get('page', 1);
+        $productName = $request->input('product_name');
+        $perPage = 10; // Number of items per page
+    
+        if ($productName) {
+            // Perform the search with Algolia
+            $products = Product::search($productName)
+                ->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+                ->load('brand');
+        }
+    
+        // Add brand_name to each product
+        $products->map(function ($product) {
+            $product->brand_name = $product->brand ? $product->brand->name : null;
+            return $product;
+        });
+    
+        $end = $products->count() < $perPage;
+    
+        return response()->json([
+            'data' => $products,
+            'end' => $end,
+            'current_page' => $page,
+            'last_page' => ceil(Product::count() / $perPage),
+        ]);
     }
 
     /**

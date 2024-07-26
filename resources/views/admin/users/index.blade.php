@@ -3,15 +3,6 @@
 
 @section('content')
 <div id="items" class="container">
-    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#userModal">Add<span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-    <div class="card-body" style="height: 210px;">
-        <input type="text" id="itemSearch" placeholder="--search--">
-    </div>
-    <form action="{{ url('brand/import') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="item_upload" class="form-control"/>
-        <button type="submit" class="btn btn-primary">Import Excel File</button>
-    </form>
     <div class="table-responsive">
         <table id="utable" class="table table-striped table-hover">
             <thead>
@@ -49,8 +40,8 @@
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select id="status" name="status" class="form-control">
-                            {{-- <option value="1">Activated</option>
-                            <option value="0">Deactivated</option> --}}
+                            {{-- <option value="processing">processing</option>
+                            <option value="delivered">delivered</option> --}}
                         </select>
                     </div>
                 </form>

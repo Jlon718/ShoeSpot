@@ -5,7 +5,7 @@
         <li class="nav-item">
             <a class="nav-link" href="/products">
                 <i class="mdi mdi-package menu-icon"></i>
-                <span class="menu-title">Product</span>
+                <span class="menu-title">Products</span>
                 {{-- <i class="menu-arrow"></i> --}}
             </a>
             {{-- <div class="collapse" id="productMenu">
@@ -20,7 +20,7 @@
         <li class="nav-item">
             <a class="nav-link" href="/brands">
                 <i class="mdi mdi-tag menu-icon"></i>
-                <span class="menu-title">Brand</span>
+                <span class="menu-title">Brands</span>
             </a>
         </li>
 
@@ -40,10 +40,18 @@
 
         <li class="nav-item">
             <a class="nav-link" href="/users">
-                <i class="mdi mdi-emoticon menu-icon"></i>
+                <i class="mdi mdi-account menu-icon"></i>
                 <span class="menu-title">Users</span>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/transactions">
+                <i class="mdi mdi-package menu-icon"></i>
+                <span class="menu-title">Transaction</span>
+            </a>
+        </li>
+        
         {{-- user list --}}
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">

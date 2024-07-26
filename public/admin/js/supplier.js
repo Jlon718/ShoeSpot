@@ -216,6 +216,12 @@ $(document).ready(function () {
         });
     });
 
+    $("#supClose").on('click', function (e) {
+        $("#supModal").hide();
+        $(".modal-backdrop").remove(); 
+              
+    });
+
     function validateForm() {
         let isValid = true;
     

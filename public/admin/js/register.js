@@ -28,7 +28,9 @@ $(document).ready(function () {
 
     $("#registerSubmit").on('click', function (e) {
         e.preventDefault();
-        var data = $('#registerForm')[0];
+
+        if(validateForm()){
+            var data = $('#registerForm')[0];
         let formData = new FormData(data);
         $.ajax({
             type: "POST",
@@ -55,6 +57,7 @@ $(document).ready(function () {
                 }
             }
         });
+        }
     });
 
     $('#customerModal').on('show.bs.modal', function(e) {
@@ -168,5 +171,92 @@ $(document).ready(function () {
         });
     });
 
+    function validateForm() {
+        let isValid = true;
+    
+        const name = $("#name").val();
+        
+        // Regular expression to allow only letters and spaces
+        const nameRegex = /^[A-Za-z\s]+$/;
+
+        if (!name) {
+            $("#nameError").text("Name is required").show();
+            isValid = false;
+        } else if (!name || name.length < 2) {
+            $("#nameError").text("Name can only contain alphabetic characters and spaces.").show();
+            isValid = false;
+        }
+         else if (!nameRegex.test(name)) {
+            $("#nameError").text("Name can only contain alphabetic characters and spaces.").show();
+            isValid = false;
+        } else {
+            $("#nameError").hide();
+        }
+
+        const email = $("#email").val();
+        if (!email) {
+            $("#emailError").text("Email address is required").show();
+            isValid = false;
+        } else if (!email || !isValidEmail(email)) {
+            $("#emailError").text("Please enter a valid email address.").show();
+            isValid = false;
+        } else {
+            $("#emailError").hide();
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        const phone = $("#phone").val();
+        if (!phone) {
+            $("#phoneError").text("Philippine SIM number is required.").show();
+            isValid = false;
+        } else if (!phone || !isValidPHPhoneNumber(phone)) {
+            $("#phoneError").text("Please enter a valid Philippine SIM number.").show();
+            isValid = false;
+        } else {
+            $("#phoneError").hide();
+        }
+        
+        function isValidPHPhoneNumber(phone) {
+            // Regular expression for Philippine phone number validation
+            const phoneRegex = /^9\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
+        const address = $("#addressline").val();
+        if (!address) {
+            $("#addresslineError").text("Address is required.").show();
+            isValid = false;
+        } else {
+            $("#addresslineError").hide();
+        }
+
+        const password = $("#password").val();
+        if (!password) {
+            $("#passwordError").text("Password is required.").show();
+            isValid = false;
+        } else if (password.length < 8){
+            $("#passwordError").text("Password must be at least 8 characters long.").show();
+            isValid = false;
+        } else {
+            $("#passwordError").hide();
+        }
+
+        const passwordConfirm = $("#password-confirm").val();
+        if (!passwordConfirm) {
+            $("#password-confirmError").text("Password is required.").show();
+            isValid = false;
+        } else if (passwordConfirm != password){
+            $("#password-confirmError").text("Password does not match.").show();
+            isValid = false;
+        } else {
+            $("#password-confirmError").hide();
+        }
+    
+        return isValid;
+    }
 
 })

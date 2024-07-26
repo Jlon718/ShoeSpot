@@ -143,7 +143,7 @@
     <div id="search-popup" class="search-popup">
         <div class="search-popup-container">
             <form role="search" method="get" id="search-form" class="search-form" action="#">
-                <input type="search" class="search-field" placeholder="Type and press enter" value="" name="product_name" />
+                <input type="search" id="search-input" class="search-field" placeholder="Type and press enter" value="" name="product_name" />
                 <ul id="autocomplete-results"></ul>
                 <button type="submit" class="search-submit">
                     <svg class="search">
@@ -159,7 +159,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="/home">
                     {{-- Logo --}}
-                    <img src="customer/images/main-logo.png" class="logo">
+                    <img src="customer/images/shoespot-logo.jpg" class="logo">
                 </a>
                 <button class="navbar-toggler d-flex d-lg-none order-3 p-2" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false"
@@ -222,7 +222,7 @@
                                 <a class="nav-link me-4 active" href="{{asset('home')}}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link me-4" href="#company-services">Transactions</a>
+                                <a class="nav-link me-4" href="{{asset('transactionCustomer')}}">Transactions</a>
                             </li>
 
                             <!-- Pages   -->
@@ -262,7 +262,7 @@
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <li class="search-item pe-3">
-                                                    <a class="search-button">
+                                                    <a class="search-button" id="open-search-popup-button">
                                                         <svg class="search">
                                                             <use xlink:href="#search"></use>
                                                         </svg>

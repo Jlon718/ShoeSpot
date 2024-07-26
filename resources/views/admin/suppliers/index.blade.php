@@ -59,7 +59,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="supClose" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button id="supSubmit" type="button" class="btn btn-primary">Save</button>
                 <button id="supUpdate" type="button" class="btn btn-primary">Update</button>
             </div>
