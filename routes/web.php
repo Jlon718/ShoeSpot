@@ -35,11 +35,10 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::view('/home','home')->name('home');
 
 //==========================================================================================
-//after ma very mapupunta sa home
 Auth::routes(['verify' => true]);
-Route::view('/home','home')->name('home');
 Route::get('/home/search', [SearchController::class, 'index'])->name('search');
 Route::get('/home/searchIndex', [SearchController::class, 'searchIndex']);
 Route::get('/products/info/{id}', [ProductController::class, 'viewproduct'])->name('prodinfo');
@@ -59,6 +58,7 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 Route::prefix('/brands')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('','admin.brands.index');
 });
+
 Route::post('brand/import', [BrandController::class,'brandsImport']);
 Route::get('brand/import', [BrandController::class,'index']);
 
@@ -84,10 +84,6 @@ Route::prefix('/suppliers')->middleware(['auth', 'isAdmin'])->group(function () 
     Route::view('','admin.suppliers.index');
 });
 
-Route::prefix('/suppliers')->middleware(['auth', 'signed'])->group(function () {
-    Route::view('','customer.transactions');
-});
-
 
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::view('/chart1', 'admin.chart1');
@@ -103,16 +99,14 @@ Route::prefix('/carts')->group(function () {
     Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
 })->middleware(['auth', 'signed']);
 
-// Route::get('/search', [SearchController::class, 'index']);
 
 Route::prefix('/mail')->group(function () {
     Route::GET('/send', [MailController::class, 'sendMail'])->name('sendMail');
 })->middleware(['auth', 'signed']);
-//pagtapos ma verify sa maitrap ma vevverify na sya sa navbar ng admin dashboard
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill(); // This will mark the email as verified
 
-    return redirect('/home'); // Redirect the user after verification
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/home');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
@@ -120,11 +114,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 //==========================================================================================
 Route::prefix('/users')->group(function () {
     Route::view('', 'admin.users.index');
-//     Route::get('/cusmanage', [customerprof::class, 'customerprof']);
-// //customer profile
-//     Route::put('/{customer}/update', [customerprof::class, 'update'])->name('customer.profile.update');
-//     Route::get('/shop', [ShopController::class, 'shop']);
 })->middleware(['auth', 'signed']);
-//(Customer side)
+
 
 //==========================================================================================

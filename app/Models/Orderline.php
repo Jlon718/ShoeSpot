@@ -14,4 +14,5 @@ class Orderline extends Model
         'product_id',
         'quantity',
     ];
+    
 }

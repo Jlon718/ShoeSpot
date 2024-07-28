@@ -6,18 +6,19 @@ use App\Models\Brand;
 use App\Models\Image;
 use App\Models\Stock;
 use App\Models\Product;
-use App\Models\Stockline;
 use App\Models\Supplier;
+use App\Models\Orderinfo;
+use App\Models\Stockline;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductResource;
-use App\Http\Resources\ProductCollection;
+use App\Imports\BrandsImport;
 use App\Imports\ProductsImport;
 use App\Imports\SuppliersImport;
-use App\Imports\BrandsImport;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\ProductCollection;
 
 class ProductController extends Controller
 {
@@ -45,9 +46,39 @@ class ProductController extends Controller
 
     public function viewProduct($id)
     {
-        $product = Product::with(['images'])->findOrFail($id);
+        $product = Product::with('images', 'reviews.customer')->findOrFail($id);
 
-        return view('prodinfo', compact('product'));
+        // Check if the user has purchased this product
+        $user = auth()->user();
+        $canAddReview = false;
+    
+        if ($user) {
+            $canAddReview = Orderinfo::whereHas('products', function ($query) use ($id) {
+                // Explicitly specify the table name to avoid ambiguity
+                $query->where('orderlines.product_id', $id);
+            })
+            ->where('orderinfos.customer_id', $user->customer->customer_id) // Fully qualify the column name
+            ->exists();
+        }
+    
+        return view('prodinfo', compact('product', 'canAddReview'));
+    }
+
+    public function hasPurchased($productId)
+    {
+        $user = auth()->user(); // Get the authenticated user
+        if (!$user) {
+            return false;
+        }
+
+        // Assuming you have an Order model and it has a relationship with Product
+        $hasPurchased = Orderinfo::where('customer_id', $user->id)
+        ->whereHas('products', function ($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })
+        ->exists();
+
+        return $hasPurchased;
     }
 
     public function store(Request $request)
@@ -86,7 +117,7 @@ class ProductController extends Controller
         $stock->quantity = $request->quantity;
         $stock->save();
 
-        $selectedSuppliers = $request->input('supplier_name', []); // Default to an empty array if no checkboxes are checked
+        $selectedSuppliers = $request->input('suppliers', []); // Default to an empty array if no checkboxes are checked
 
     // Process the selected suppliers
         foreach ($selectedSuppliers as $supplierId) {

@@ -36,6 +36,16 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'brand_id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'product_id');
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Orderinfo::class, 'orderlines', 'product_id', 'orderinfo_id')->withPivot('quantity');
+    }
+
     public function toSearchableArray()
     {
         $array = $this->toArray();

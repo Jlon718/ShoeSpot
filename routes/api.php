@@ -15,6 +15,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,10 @@ Route::apiResource('cart', CartController::class);
 Route::apiResource('product', ProductController::class);
 Route::apiResource('supplier', SupplierController::class);
 Route::apiResource('user', UserController::class);
+
+Route::post('/review/store', [ReviewController::class, 'store']);
+Route::get('/review/{productId}', [ReviewController::class, 'index']);
+
 
 Route::apiResource('transactions', TransactionController::class);
 Route::get('/all-brands', [BrandController::class, 'getAll']);

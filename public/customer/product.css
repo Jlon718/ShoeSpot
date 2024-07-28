@@ -17,3 +17,76 @@
 .product-text {
     color: #000; /* Set the text color to black for better visibility */
 }
+
+/* Review Pop-Up Styles */
+.review-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.review-popup-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.review-popup .form-group {
+    margin-bottom: 15px;
+}
+
+.review-popup .form-control {
+    width: 100%;
+}
+
+.review-popup .btn {
+    margin-right: 10px;
+}
+
+.review-popup .alert {
+    margin-top: 10px;
+}
+
+/* Star Rating Styles */
+.star-rating {
+    direction: rtl;
+    display: inline-block;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.star-rating input:checked ~ label {
+    color: #ffcc00;
+}
+
+.star-rating input:checked ~ label:hover,
+.star-rating label:hover {
+    color: #ffcc00;
+}
+
+.star-rating label:hover ~ label {
+    color: #ddd;
+}
+

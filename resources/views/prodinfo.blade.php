@@ -41,7 +41,55 @@
                 </div>
             </div>
         </form>
-        <a href="{{ url('/home') }}" class="back-button">Back to Products</a>
+        <a href="{{ url('/home') }}" class="back-button"><- Back to Products</a><br>
+        @if ($canAddReview)
+        <button id="open-review-popup-button" class="btn btn-secondary">Add a review</button>
+        @else
+            <p>You cannot add a review for this product.</p>
+        @endif
+    </div>
+
+    <div id="reviews">
+
+    </div>
+
+    <div id="review-popup" class="review-popup" style="display: none;">
+        <div class="review-popup-container">
+            <h2>Submit Your Review</h2>
+            <form id="reviewForm" method="POST" action="#">
+                @csrf
+                <input type="hidden" id="product_id" name="product_id" value="{{ $product->product_id }}">
+                <input type="hidden" id="customer_id" name="customer_id" value="{{ auth()->user()->customer->customer_id }}">
+
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <div id="star-rating" class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5 stars">&#9733;</label>
+                        <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">&#9733;</label>
+                        <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">&#9733;</label>
+                        <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">&#9733;</label>
+                        <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">&#9733;</label>
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label for="review_text">Review:</label>
+                    <textarea id="review_text" name="review_text" class="form-control" rows="5" required></textarea>
+                </div>
+    
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <button type="button" id="close-review-popup" class="btn btn-secondary">Cancel</button>
+            </form>
+            <div id="reviewMessage" class="mt-3"></div>
+        </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript">
+        var productId = {{ $product->product_id }};
+        var csrf_token = '{{ csrf_token() }}';
+    </script>
+    <script src="{{ asset('customer/js/review.js') }}"></script>
 @endsection
