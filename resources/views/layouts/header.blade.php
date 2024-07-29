@@ -42,6 +42,7 @@
     <script src="{{ asset('admin/js/home.js') }}"></script>
     <script src="{{ asset('admin/js/cart.js') }}"></script>
     <script src="{{ asset('admin/js/search.js') }}"></script>
+    <script src="{{ asset('admin/js/customer.js') }}"></script>
 
     <!-- Modernizr JS -->
     <script src="js/modernizr.js"></script>
@@ -159,7 +160,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="/home">
                     {{-- Logo --}}
-                    <img src="customer/images/shoespot-logo.jpg" class="logo">
+                    <img src="{{asset('customer/images/shoespot-logo.jpg')}}" class="logo">
                 </a>
                 <button class="navbar-toggler d-flex d-lg-none order-3 p-2" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false"
@@ -222,7 +223,7 @@
                                 <a class="nav-link me-4 active" href="{{asset('home')}}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link me-4" href="{{asset('transactionCustomer')}}">Transactions</a>
+                                <a class="nav-link" href="{{ route('customer.custransactions') }}">Transactions</a>
                             </li>
 
                             <!-- Pages   -->

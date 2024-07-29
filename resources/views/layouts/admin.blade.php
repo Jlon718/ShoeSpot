@@ -77,5 +77,6 @@
     <script src="{{ asset('admin/js/user.js') }}"></script>
     <script src="{{ asset('admin/js/search.js') }}"></script>
     <script src="{{ asset('admin/js/transaction.js') }}"></script>
+    <script src="{{ asset('admin/js/customer.js') }}"></script>
 </body>
 </html>

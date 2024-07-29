@@ -56,6 +56,7 @@ $(document).ready(function () {
             data: formData,
             dataType: 'json',
             success: function (response) {
+                console.log(response);
                 $('#reviewMessage').html('<div class="alert alert-success">Thank you for your review!</div>');
                 $('#reviewForm')[0].reset(); // Reset the form fields
                 setTimeout(function () {

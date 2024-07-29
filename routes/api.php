@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\controller\customerprof;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IndivProductController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\customer\CustomerprofController;
 use App\Http\Controllers\ReviewController;
 
 /*
@@ -41,6 +43,7 @@ Route::apiResource('cart', CartController::class);
 Route::apiResource('product', ProductController::class);
 Route::apiResource('supplier', SupplierController::class);
 Route::apiResource('user', UserController::class);
+Route::apiResource('customers', CustomerprofController::class);
 
 Route::post('/review/store', [ReviewController::class, 'store']);
 Route::get('/review/{productId}', [ReviewController::class, 'index']);
@@ -53,6 +56,8 @@ Route::get('/all-suppliers', [SupplierController::class, 'getAll']);
 Route::get('/products/{id}', [ProductController::class, 'viewProduct'])->name('api.prodinfo');
 
 Route::post('/login', [LoginController::class, 'login'])->name('api.login');
+
+Route::middleware('auth:api')->get('/orders', [TransactionController::class, 'getOrders']);
 // Route::get('/search', [SearchController::class, 'index']);
 
 Route::get('/title-chart',[ChartController::class, 'titleChart']);

@@ -1,5 +1,4 @@
 @extends('layouts.header')
-
 @section('content')
 <div class="container">
     <div class="product-info">
@@ -30,24 +29,27 @@
         <form id="productform_{{ $product->product_id }}" action="#" method="#" class="mt-2">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input type="hidden" id="product_id" name="product_id" value="{{ $product->product_id }}">
-            <div class="row">
-                <div class="col-md-10 mt-1 mt-md-0">
-                    <button id="addCart" type="submit" class="btn btn-medium btn-black">
-                        Add to Cart
-                        <svg class="cart-outline">
-                            <use xlink:href="#cart-outline"></use>
-                        </svg>
-                    </button>
+            <div class="button-container">
+                <div class="row">
+                    <div class="col-md-10 mt-1 mt-md-0">
+                        <button id="addCart" type="submit" class="btn btn-medium btn-black">
+                            Add to Cart
+                            <svg class="cart-outline">
+                                <use xlink:href="#cart-outline"></use>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+                @if ($canAddReview)
+                    <button id="open-review-popup-button" class="btn btn-secondary mt-3">Add a review</button>
+                @else
+                    <p class="mt-3">You cannot add a review for this product.</p>
+                @endif
+            
+                <a href="{{ url('/home') }}" class="btn btn-primary mt-3">← Back to Products</a>
             </div>
-        </form>
-        <a href="{{ url('/home') }}" class="back-button"><- Back to Products</a><br>
-        @if ($canAddReview)
-        <button id="open-review-popup-button" class="btn btn-secondary">Add a review</button>
-        @else
-            <p>You cannot add a review for this product.</p>
-        @endif
-    </div>
+            
+        </div>
 
     <div id="reviews">
 
@@ -77,7 +79,7 @@
                     <textarea id="review_text" name="review_text" class="form-control" rows="5" required></textarea>
                 </div>
     
-                <button type="submit" class="btn btn-primary">Submit Review</button>
+                <button type="submit" id="reviewSubmit" class="btn btn-primary">Submit Review</button>
                 <button type="button" id="close-review-popup" class="btn btn-secondary">Cancel</button>
             </form>
             <div id="reviewMessage" class="mt-3"></div>

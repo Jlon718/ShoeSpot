@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Orderinfo;
 use Illuminate\Http\Request;
 
@@ -120,4 +121,71 @@ class TransactionController extends Controller
         'status' => 200
     ]);
 }
+
+    // In TransactionController.php
+    // public function customerIndex()
+    // {
+    //     $user = Auth::user();
+    //     $customer = $user->customer;
+
+    //     if (!$customer) {
+    //         return view('customer.custransactions', ['purchasedProducts' => collect()]);
+    //     }
+
+    //     $orders = $customer->orders()->with('products')->get();
+
+    //     if ($orders->isEmpty()) {
+    //         dd('No orders found for customer', $customer->customer_id);
+    //     }
+
+    //     foreach ($orders as $order) {
+    //         $products = $order->products;
+    //         if ($products->isEmpty()) {
+    //             dd('No products found for order', $order->orderinfo_id);
+    //         }
+    //     }
+
+    //     // At this point, we have verified orders and products exist
+    //     return view('customer.custransactions', compact('orders'));
+    // }
+
+//     public function customerIndex()
+// {
+//     $user = Auth::user();
+//     $orders = $user->customer->orders()->with('products')->get();
+
+//     // Debug the orders data
+//     foreach ($orders as $order) {
+//         if (!$order->status) {
+//             dd('Status not found for order', $order->orderinfo_id, $order);
+//         }
+//     }
+
+//     return view('customer.custransactions', compact('orders'));
+// }
+
+    public function customerIndex()
+    {
+        $user = Auth::user();
+        $orders = $user->customer->orders()->with('products')->get();
+
+        // Debugging: log the orders and their statuses
+        foreach ($orders as $order) {
+            \Log::info('Order ID: ' . $order->orderinfo_id . ' Status: ' . $order->status);
+            foreach ($order->products as $product) {
+                \Log::info('Product ID: ' . $product->product_id . ' Product Name: ' . $product->product_name . ' Order Status: ' . $order->status);
+            }
+        }
+
+        return view('customer.custransactions', compact('orders'));
+    }
+
+    public function getOrders()
+    {
+        $user = Auth::user();
+        $orders = $user->customer->orders()->with('products')->get();
+
+        return response()->json($orders);
+    }
+
 }
